@@ -18,7 +18,7 @@ contract Dice is usingOraclize {
   }
 
   mapping(bytes32 => GameData) _queryToGameData;
-  mapping(address => bytes32) _playerToLastValidGame;
+  mapping(address => bytes32) _playerToLastValidQuery;
 
   // TODO: re-insert when we add wagering
   //mapping(address => uint256) _playerBalances;
@@ -30,7 +30,7 @@ contract Dice is usingOraclize {
 
   function Dice() {}
 
-  function roll(uint256 min, uint256 max) external payable {
+  function roll(uint256 min, uint256 max) external payable returns (bytes32) {
     // min >= max doesn't make sense for a roll!
     require(min < max);
 
@@ -43,14 +43,16 @@ contract Dice is usingOraclize {
     require(msg.value > queryPrice);
 
     string memory queryStr = _getQueryStr(min, max);
-    bytes32 qID = oraclize_query("URL", queryStr);
+    bytes32 qId = oraclize_query("URL", queryStr);
 
-    _queryToGameData[qID] = GameData(
+    _queryToGameData[qId] = GameData(
       msg.sender,
       min,
       max,
       INVALID_ROLL
     );
+
+    return qId;
   }
 
   function _getQueryStr(uint256 min, uint256 max) internal pure returns(string) {
@@ -68,8 +70,12 @@ contract Dice is usingOraclize {
 
     // TODO: Check authenticity proof!
 
+    // Update game
     uint256 roll = _resultToRoll(result);
     _queryToGameData[qId].roll = roll;
+
+    // Update latest game for player
+    _playerToLastValidQuery[_queryToGameData[qId].player] = qId;
 
     emit RollCompleted(qId, roll);
   }
@@ -82,7 +88,7 @@ contract Dice is usingOraclize {
 
   // Maybe also return min/max
   function getLastRoll() external returns(uint256) {
-    bytes32 qID = _playerToLastValidGame[msg.sender];
+    bytes32 qID = _playerToLastValidQuery[msg.sender];
 
     // Is this the right check?
     if (qID == "") {
@@ -92,5 +98,9 @@ contract Dice is usingOraclize {
 
       return data.roll;
     }
+  }
+
+  function getRoll(bytes32 qId) external returns(uint256) {
+    // TODO
   }
 }
