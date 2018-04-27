@@ -16,6 +16,8 @@ contract MockedDice  {
     _playerToLastRoll[msg.sender] = min + 1;
 
     _nextQId++;
+
+    return bytes32(_nextQId);
   }
 
   function getLastRoll() external returns(uint256) {
