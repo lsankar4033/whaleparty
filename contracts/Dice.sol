@@ -23,6 +23,11 @@ contract Dice is usingOraclize {
   // TODO: re-insert when we add wagering
   //mapping(address => uint256) _playerBalances;
 
+  event RollCompleted(
+    bytes32 indexed _qId,
+    uint256 _roll
+  );
+
   function Dice() {}
 
   function roll(uint256 min, uint256 max) external payable {
@@ -32,7 +37,7 @@ contract Dice is usingOraclize {
     // Make sure INVALID_ROLL outside of the specified range
     require(INVALID_ROLL < min || INVALID_ROLL > max);
 
-    uint256 queryPrice = oraclize_getPrice("URL")
+    uint256 queryPrice = oraclize_getPrice("URL");
 
     // Player must pay query fee
     require(msg.value > queryPrice);
@@ -45,30 +50,38 @@ contract Dice is usingOraclize {
       min,
       max,
       INVALID_ROLL
-    )
+    );
   }
 
-  // TODO: Make this return the proper query string!
   function _getQueryStr(uint256 min, uint256 max) internal pure returns(string) {
-    // TODO: Include min/max in query
-    // TODO: Do we want to send a random query ID along?
     // NOTE: Mostly copied from Etheroll. validate this a bit more tightly...
-    string memory queryStr = "'json(https://api.random.org/json-rpc/1/invoke).result.random[\"serialNumber\",\"data\"]', '\\n{\"jsonrpc\":\"2.0\",\"method\":\"generateSignedIntegers\",\"params\":{\"apiKey\":${[decrypt] BJ8BMENGnafmVci9OE5n98MGZRU624r/QWOQi90YwuZzHL2jaK2SCf5L38gsyD3kG4CS3sjZVLPdprfbo+L9lUXQtVJb/8SPIjkMU3lk943v60Co2+oLMVgSRtNKAAzHS6DJPeLOYaDHLhbCLORoUt2fPKSp87E=},\"n\":1,\"min\":1,\"max\":100,\"replacement\":true,\"base\":10${[identity] \"}\"},\"id\":";
+    // string memory queryStr = "'json(https://api.random.org/json-rpc/1/invoke).result.random[\"serialNumber\",\"data\"]', '\\n{\"jsonrpc\":\"2.0\",\"method\":\"generateSignedIntegers\",\"params\":{\"apiKey\":${[decrypt] BJ8BMENGnafmVci9OE5n98MGZRU624r/QWOQi90YwuZzHL2jaK2SCf5L38gsyD3kG4CS3sjZVLPdprfbo+L9lUXQtVJb/8SPIjkMU3lk943v60Co2+oLMVgSRtNKAAzHS6DJPeLOYaDHLhbCLORoUt2fPKSp87E=},\"n\":1,\"min\":1,\"max\":100,\"replacement\":true,\"base\":10${[identity] \"}\"},\"id\":";
 
+    // TODO!!!
     return "";
   }
 
   // TODO: The method called by Oraclize. Make sure to validate that only oraclize address calls this
-  function __callback(bytes32 _queryId, string _result, bytes _proof) public {
-    // note, should verify that proof doesn't fail
+  function __callback(bytes32 qId, string result, bytes proof) public {
+    // Must be called by oraclize
+    require(msg.sender == oraclize_cbAddress());
 
-    // TODO: Fill this out!
+    // TODO: Check authenticity proof!
 
+    uint256 roll = _resultToRoll(result);
+    _queryToGameData[qId].roll = roll;
+
+    emit RollCompleted(qId, roll);
+  }
+
+  function _resultToRoll(string result) internal pure returns(uint256) {
+    // TODO: Propertly extract once we've set up proper json endpoint!
+    return 1;
   }
 
 
   // Maybe also return min/max
-  function getLastRoll() external (uint256) {
+  function getLastRoll() external returns(uint256) {
     bytes32 qID = _playerToLastValidGame[msg.sender];
 
     // Is this the right check?
@@ -77,7 +90,7 @@ contract Dice is usingOraclize {
     } else {
       GameData memory data = _queryToGameData[qID];
 
-      return data.roll
+      return data.roll;
     }
   }
 }

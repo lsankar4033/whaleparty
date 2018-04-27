@@ -8,3 +8,10 @@ Two common approaches for trusted randomness are:
 
 For our first iteration, we're going with 2 as it'll allow us to prototype something relatively rapidly. The
 sooner we launch a game, the better :).
+
+## Dice Game w/ oracle
+
+TODO:
+- figure out how to mock out oraclize for dev testing...
+- figure out proper random.org querying
+- frontend
