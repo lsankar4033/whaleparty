@@ -8,10 +8,10 @@ contract Dice is usingOraclize {
 
   // TODO: Perhaps add something to track if authenticity proof was invalid
   struct GameData {
-    address player,
-    uint256 min,
-    uint256 max,
-    uint256 roll
+    address player;
+    uint256 min;
+    uint256 max;
+    uint256 roll;
   }
 
   mapping(bytes32 => GameData) _queryToGameData;
@@ -28,9 +28,9 @@ contract Dice is usingOraclize {
   }
 
   // TODO: The method called by Oraclize
-  function __callback(bytes32 _queryId, string _result, bytes _proof) external {
-    // note, should verify that proof doesn't fail
-  }
+  //function __callback(bytes32 _queryId, string _result, bytes _proof) external {
+    //// note, should verify that proof doesn't fail
+  //}
 
 
   function getLastRoll() external {
