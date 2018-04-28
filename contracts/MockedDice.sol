@@ -20,11 +20,11 @@ contract MockedDice  {
     return bytes32(_nextQId);
   }
 
-  function getLastRoll() external returns(uint256) {
+  function getLastRoll() external view returns(uint256) {
     return _playerToLastRoll[msg.sender];
   }
 
-  function getRoll(bytes32 qId) external returns(uint256) {
+  function getRoll(bytes32 qId) external view returns(uint256) {
     return _queryToRoll[qId];
   }
 }
