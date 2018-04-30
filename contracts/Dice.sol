@@ -43,6 +43,8 @@ contract Dice is usingOraclize {
     require(msg.value > queryPrice);
 
     string memory queryStr = _getQueryStr(min, max);
+
+    // TODO: When we need to encrypto random.org encryption key, this will need to become a 'nested' query
     bytes32 qId = oraclize_query("URL", queryStr);
 
     _queryToGameData[qId] = GameData(
@@ -55,15 +57,11 @@ contract Dice is usingOraclize {
     return qId;
   }
 
+  // NOTE: Doesn't use API key so that we don't have to do all the fancy encryption stuff.
   function _getQueryStr(uint256 min, uint256 max) internal pure returns(string) {
-    // NOTE: Mostly copied from Etheroll. validate this a bit more tightly...
-    // string memory queryStr = "'json(https://api.random.org/json-rpc/1/invoke).result.random[\"serialNumber\",\"data\"]', '\\n{\"jsonrpc\":\"2.0\",\"method\":\"generateSignedIntegers\",\"params\":{\"apiKey\":${[decrypt] BJ8BMENGnafmVci9OE5n98MGZRU624r/QWOQi90YwuZzHL2jaK2SCf5L38gsyD3kG4CS3sjZVLPdprfbo+L9lUXQtVJb/8SPIjkMU3lk943v60Co2+oLMVgSRtNKAAzHS6DJPeLOYaDHLhbCLORoUt2fPKSp87E=},\"n\":1,\"min\":1,\"max\":100,\"replacement\":true,\"base\":10${[identity] \"}\"},\"id\":";
-
-    // TODO!!!
-    return "";
+    return strConcat("https://www.random.org/integers/?num=", uint2str(min), "&max=", uint2str(max), "&col=1&base=10&format=plain&rnd=new")
   }
 
-  // TODO: The method called by Oraclize. Make sure to validate that only oraclize address calls this
   function __callback(bytes32 qId, string result, bytes proof) public {
     // Must be called by oraclize
     require(msg.sender == oraclize_cbAddress());
@@ -82,9 +80,19 @@ contract Dice is usingOraclize {
 
   function _resultToRoll(string result) internal pure returns(uint256) {
     // TODO: Propertly extract once we've set up proper json endpoint!
-    return 1;
+    return str2uint(result);
   }
 
+  function str2uint(string s) constant returns (uint256) {
+    bytes memory b = bytes(s);
+    uint result = 0;
+    for (uint i = 0; i < b.length; i++) { // c = b[i] was not needed
+      if (b[i] >= 48 && b[i] <= 57) {
+        result = result * 10 + (uint(b[i]) - 48); // bytes and int are not compatible with the operator -.
+      }
+    }
+    return result; // this was missing
+  }
 
   // Maybe also return min/max
   function getLastRoll() external returns(uint256) {
