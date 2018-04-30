@@ -7,6 +7,36 @@ App = {
 
     $('#test-roller').click( (e) => App.roll(1, 6) );
     $('#get-last-roll').click( App.getLastRoll );
+
+    //
+    // $('#betamount').change($('.wager').text($('#betamount').val()));
+    // $('#betamount').change(function() {$('.wager').text($('#betamount').val())});
+    $('#betamount').on('input', function() {
+      $('.wager').text($('#betamount').val())
+    });
+
+    $('#min').click(function(){
+      $('.wager').text(0.1);
+      $('#betamount').val(.1);
+    });
+
+    $('#5').click(function(){
+      $('.wager').text(0.5);
+      $('#betamount').val(0.5);
+    });
+
+    $('#1').click(function(){
+      $('.wager').text(1);
+      $('#betamount').val(1);
+      alert($('#betamount').val())
+    });
+
+    $('#2').click(function(){
+      $('.wager').text(2);
+      $('#betamount').val(2);
+    });
+
+
   },
 
   initContracts: async () => {
@@ -39,7 +69,7 @@ App = {
 };
 
 $(function() {
-  $(window).load(function() {
+  $(window).load( () => {
     App.init();
   });
 });

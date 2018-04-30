@@ -9,6 +9,7 @@
     <style>
       body{
         background: pink;
+        background-image: url("/image/goldencrowns.ai");
         text-align: center;
         font-family:sans-serif;
         margin:0;}
@@ -144,10 +145,10 @@
             <input class="numb" id="betamount" type="number" min=".1" max="2" step=".1" value="0.1">
 
             <div class = "control">
-              <button class="auto-button" type="button" onclick="betamount.value=.1">MIN </button>
-              <button class="auto-button" type="button" onclick="betamount.value=.5" >.5 </button>
-              <button class="auto-button" type="button" onclick="betamount.value=1" >1 </button>
-              <button class="auto-button" type="button" onclick="betamount.value=2" >2 </button>
+              <button class="auto-button" type="button" onclick="betamount.value= 0.1" id="min">MIN </button>
+              <button class="auto-button" type="button" onclick="betamount.value= 0.5" id="point5" >0.5 </button>
+              <button class="auto-button" type="button" onclick="betamount.value= 1"  id ="1" >1 </button>
+              <button class="auto-button" type="button" onclick="betamount.value= 2" id ="max" >MAX </button>
             </div>
           </div>
 
@@ -176,8 +177,8 @@
         <div class="Analysis">
           <h2 > Roll Under <output class=rainbow id="x">51</output> </h2>
 
-          <div class="item wager">
-            <label> Wager  Dummy #</label>  <br> <!-- do I use form for this again? -->
+          <div class="itemwager">
+            <label> Wager </label> <label class="wager">0.1 </label> ETH <br> <!-- do I use form for this again? -->
             <label> Potential Winning </label> Dummy#<!-- do I use form for this again? -->
             <p> commission: 1% </p>
           </div>
