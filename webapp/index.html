@@ -6,13 +6,207 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Etherdice</title>
+    <style>
+      body{
+        background: pink;
+        text-align: center;
+        font-family:sans-serif;
+        margin:0;}
+      header{
+        color: white;
+        font-weight: bold;
+        margin-top: 5%;
+        margin-bottom: 5%;
+        }
+      .auto-button{
+        width: 3.5em;
+        text-align: center;
+        }
+      .keep{
+        margin:0;
+        }
 
+      .bet-size{
+        margin-bottom: 5%;
+        }
+
+      .wrap{
+        width: 100%;
+        }
+
+      .place-bet{
+        float:left;
+        width: 30%;
+        }
+
+      .Analysis{
+        float:right;
+        width: 30%;
+        }
+
+      .mysterybox{
+        padding-top: 10%;
+        margin: 0% 40% 0% 40%;
+        }
+      .mystery{
+        padding-top: 20%;
+        padding-bottom: 20%;
+        background: gold;
+        border-radius: 15%;
+        border: 1px dotted green;
+        }
+
+      @media (max-width: 670px){
+        .place-bet, .Analysis{
+          float: none;
+          width: 100%;
+          }
+        .mysterybox{
+          padding-top: 0;
+          padding-bottom: 5%;
+        }
+
+        }
+
+      .action{
+        margin-top: 5%;
+        }
+
+      .control{
+        margin-top: 2%;
+        margin-bottom: 5%;
+        }
+
+      .bet-value{
+        margin-top:8%;
+        }
+
+      h2{
+        color: white;
+        font-weight: bold;
+        font-family:sans-serif;
+        }
+      label{
+        margin-right: 2%;
+        }
+      .numb{
+        width: 3.5em ;
+        border-radius: 15%;
+        padding: .2em;
+        background: gold;
+        text-align: right;
+        }
+
+      /*input[type='range']:after{
+        position: absolute;
+        word-spacing: 20px;
+        left: 0px;
+        top: 0px;
+        }*/
+
+      footer {
+
+        height: 3%;
+        position: fixed;
+        left: 0;
+        right: 0;
+        background:#6cf;
+        bottom: 0;
+        }
+      #x{
+        margin-left: 2%;
+        }
+
+      .rainbow {
+        background-image: -webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );
+        background-image: gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );
+        color:transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+        }
+    </style>
   </head>
+
   <body>
+    <header>
+        <h1 class = "keep"> Keep </h1>
+        <h1 class = "keep"> Calm </h1>
+        <h3 class = "keep"> and </h3>
+        <h1 class = "keep">Roll On </h1>
+    </header>
 
-    <button id="test-roller">Test Roll</button>
+    <form oninput="x.value=parseInt(output.value)+parseInt(1)">
+      <div class = "wrap">
+        <div class = "place-bet">
+          <h2> Place your bet </h2>
+          <div class = "bet-size">
+            <label> Bet Size </label>
+            <input class="numb" id="betamount" type="number" min=".1" max="2" step=".1" value="0.1">
 
-    <button id="get-last-roll">Get Last Roll</button>
+            <div class = "control">
+              <button class="auto-button" type="button" onclick="betamount.value=.1">MIN </button>
+              <button class="auto-button" type="button" onclick="betamount.value=.5" >.5 </button>
+              <button class="auto-button" type="button" onclick="betamount.value=1" >1 </button>
+              <button class="auto-button" type="button" onclick="betamount.value=2" >2 </button>
+            </div>
+          </div>
+
+          <div class = "bet-value">
+
+            <label> Chance of Winning </label>
+            <p><output id="output" for="rangeInput">50</output>%</p><!-- Just to display selected value -->
+
+            <div class="control">
+              <sup>0%</sup><input type="range" min="1" max="98" value="50" step="1" list="tickmarks" id="rangeInput" oninput="output.value = rangeInput.value"><sup>100%</sup>
+              <datalist id="tickmarks">
+                <option value="0 to 20">0</option>
+                <option>20</option>
+                <option>40</option>
+                <option>60</option>
+                <option>80</option>
+                <option>100</option>
+              </datalist>
+            </div>
+          </div>
+
+          <button class="action" id="get-last-roll" onclick="compare()">Get Last Roll</button>
+          <button class="action" id="test-roller" onclick="store_bet_value()">Test Roll</button>
+        </div>
+
+        <div class="Analysis">
+          <h2 > Roll Under <output class=rainbow id="x">51</output> </h2>
+
+          <div class="item wager">
+            <label> Wager  Dummy #</label>  <br> <!-- do I use form for this again? -->
+            <label> Potential Winning </label> Dummy#<!-- do I use form for this again? -->
+            <p> commission: 1% </p>
+          </div>
+        </div>
+
+        <div class = "mysterybox">
+          <h1 class=mystery> ??? </h1>
+        </div>
+
+      </div>
+    </form>
+
+
+
+    <footer>
+      <font size = "1" > Free Vectors via <a rel="nofollow" href="https://www.vecteezy.com">Vecteezy!</a></font>
+    </footer>
+
+    <!-- <script>
+    function store_bet_value() {
+    var global x = document.getElementById("userInput").value;
+    return x;}
+    </script> -->
+
+    <!-- <script>
+    if (new Date().getHours() < 18) {
+        document.getElementById("demo").innerHTML = "Good day!";
+    }
+    </script> -->
 
     <!-- bootstrap+jquery+popper+moment -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -21,6 +215,7 @@
     <script src="js/truffle-contract.min.js"></script>
 
     <script src="js/app.js"></script>
+
 
   </body>
 </html>
