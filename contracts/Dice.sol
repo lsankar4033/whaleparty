@@ -2,9 +2,10 @@ pragma solidity ^0.4.4;
 
 import "./oraclize/oraclizeAPI.sol";
 
+import "./zeppelin/Ownable.sol";
 import "./zeppelin/SafeMath.sol";
 
-contract Dice is usingOraclize {
+contract Dice is usingOraclize, Ownable {
   using SafeMath for uint256;
 
   // TODO: Remove once we start deleting old games from contract
@@ -42,13 +43,36 @@ contract Dice is usingOraclize {
 
   constructor() public {}
 
+  ////////////////
+  // ADMIN ACTIONS
+  ////////////////
+
+  function withdrawBalance() external onlyOwner {
+    uint256 balance = address(this).balance;
+
+    // No withdrawal necessary if <= 0 balance
+    require(balance > 0);
+
+    msg.sender.transfer(balance);
+  }
+
+  // TODO: Should this be access restricted?
+  function addBalance() external payable {
+  }
+
+  ///////////////
+  // USER ACTIONS
+  ///////////////
+
   function roll(uint256 odds) external payable returns (bytes32) {
     uint256 queryPrice = oraclize_getPrice("URL");
 
     // TODO: Also subtract creator fee!
-    // player's wager must cover query fee
+    // player's wager
     require(msg.value > queryPrice);
-    uint256 trueWager = msg.value - queryPrice;
+    uint256 wagerAfterQuery = msg.value - queryPrice;
+    uint256 fee = computeRollFee(wagerAfterQuery);
+    uint256 trueWager = wagerAfterQuery - fee;
 
     // NOTE: Can probably simplify this to something static
     string memory queryStr = _getQueryStr(MIN_ROLL, MAX_ROLL);
@@ -66,6 +90,11 @@ contract Dice is usingOraclize {
     );
 
     return qId;
+  }
+
+  // NOTE: 1%, can be modified!
+  function computeRollFee(uint256 wagerAfterQuery) private pure returns (uint256) {
+    return SafeMath.div(wagerAfterQuery, 100);
   }
 
   // NOTE: Doesn't use API key so that we don't have to do all the fancy encryption stuff.
