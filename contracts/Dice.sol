@@ -2,25 +2,33 @@ pragma solidity ^0.4.4;
 
 import "./oraclize/oraclizeAPI.sol";
 
-contract Dice is usingOraclize {
+import "./zeppelin/SafeMath.sol";
 
+contract Dice is usingOraclize {
+  using SafeMath for uint256;
+
+  // TODO: Remove once we start deleting old games from contract
   uint256 constant INVALID_ROLL = 0;
+
+  // Depends on slider
+  uint256 constant MIN_ROLL = 1;
+  uint256 constant MAX_ROLL = 100;
 
   // TODO: Perhaps add something to track if authenticity proof was invalid
   struct GameData {
     address player;
-    uint256 min;
-    uint256 max;
-    uint256 roll;
+    uint256 odds; // represents the roll under which all winning rolls must lie
+    uint256 trueWager;
+    uint256 roll; // only populated when game is complete
+    bool active;
   }
 
   mapping(bytes32 => GameData) _queryToGameData;
-  mapping(address => bytes32) _playerToLastValidQuery;
 
-  // TODO: re-insert when we add wagering OR just use PullPayment
-  //mapping(address => uint256) _playerBalances;
+  // For display purposes only
+  uint256 public completedGames = 0;
 
-  event RollCompleted(
+  event GameCompleted(
     bytes32 indexed _qId,
     uint256 _roll
   );
@@ -28,37 +36,34 @@ contract Dice is usingOraclize {
   event RollSubmitted(
     address indexed _sender,
     bytes32 indexed _qId,
-    uint256 _min,
-    uint256 _max
+    uint256 _odds,
+    uint256 _trueWager
   );
 
   constructor() {}
 
-  function roll(uint256 min, uint256 max) external payable returns (bytes32) {
-    // min >= max doesn't make sense for a roll!
-    require(min < max);
-
-    // Make sure INVALID_ROLL outside of the specified range
-    require(INVALID_ROLL < min || INVALID_ROLL > max);
-
+  function roll(uint256 odds) external payable returns (bytes32) {
     uint256 queryPrice = oraclize_getPrice("URL");
 
-    // Player must pay query fee
+    // TODO: Also subtract creator fee!
+    // player's wager must cover query fee
     require(msg.value > queryPrice);
+    uint256 trueWager = msg.value - queryPrice;
 
-    string memory queryStr = _getQueryStr(min, max);
+    // NOTE: Can probably simplify this to something static
+    string memory queryStr = _getQueryStr(MIN_ROLL, MAX_ROLL);
 
     // TODO: When we need to encrypt random.org encryption key, this will need to become a 'nested' query
     bytes32 qId = oraclize_query("URL", queryStr);
+    emit RollSubmitted(msg.sender, qId, odds, trueWager);
 
     _queryToGameData[qId] = GameData(
       msg.sender,
-      min,
-      max,
-      INVALID_ROLL
+      odds,
+      trueWager,
+      INVALID_ROLL,
+      true
     );
-
-    emit RollSubmitted(msg.sender, qId, min, max);
 
     return qId;
   }
@@ -72,38 +77,69 @@ contract Dice is usingOraclize {
     // Must be called by oraclize
     require(msg.sender == oraclize_cbAddress());
 
+    // Game must not have been cancelled or completed
+    require(_queryToGameData[qId].active);
+
     // TODO: Check authenticity proof
 
-    // Update game
+    // Payout player
     uint256 roll = _resultToRoll(result);
+    uint256 payout = _calculatePayout(qId, roll);
+    if (payout > 0) {
+      _queryToGameData[qId].player.transfer(payout);
+    }
+
+    // TODO: Delete game in the future to save space
     _queryToGameData[qId].roll = roll;
+    _queryToGameData[qId].active = false;
 
-    // Update latest game for player
-    _playerToLastValidQuery[_queryToGameData[qId].player] = qId;
+    // game completed!
+    completedGames.add(1);
+    emit GameCompleted(qId, roll);
+  }
 
-    // Frontend should listen for this message!
-    emit RollCompleted(qId, roll);
+  function _calculatePayout(bytes32 qId, uint256 roll) internal view returns(uint256) {
+    uint256 odds = _queryToGameData[qId].odds;
+    if (roll > odds) {
+      return 0;
+    } else {
+      uint256 wager = _queryToGameData[qId].trueWager;
+
+      // payout = wager + winnings
+      // winnings = (100 - x) / x
+      uint256 invOdds = MAX_ROLL.sub(odds);
+      uint256 winnings = invOdds.div(odds);
+      return wager.add(winnings);
+    }
   }
 
   function _resultToRoll(string result) internal returns(uint256) {
     return parseInt(result);
   }
 
-  // Maybe also return min/max
-  function getLastRoll() external returns(uint256) {
-    bytes32 qID = _playerToLastValidQuery[msg.sender];
-
+  function getRoll(bytes32 qId) public returns(uint256) {
     // Is this the right check?
-    if (qID == "") {
+    if (qId == "") {
       return INVALID_ROLL;
     } else {
-      GameData memory data = _queryToGameData[qID];
-
-      return data.roll;
+      return _queryToGameData[qId].roll;
     }
   }
 
-  function getRoll(bytes32 qId) external returns(uint256) {
-    return _queryToGameData[qId].roll;
+  function cancelRoll(bytes32 qId) public {
+    GameData memory game = _queryToGameData[qId];
+
+    // Canceller must be player
+    require(game.player == msg.sender);
+
+    // Must be an active game
+    require(game.active);
+
+    // Refund player
+    game.player.transfer(game.trueWager);
+
+    // TODO: Delete game in the future
+    // Set game inactive
+    _queryToGameData[qId].active = true;
   }
 }
