@@ -9,35 +9,44 @@ App = {
     $('#get-last-roll').click( App.getLastRoll );
 
     //
-    // $('#betamount').change($('.wager').text($('#betamount').val()));
-    // $('#betamount').change(function() {$('.wager').text($('#betamount').val())});
+    $('#betamount').change($('.wager').text($('#betamount').val()));
+    $('#betamount').change(function() {$('.wager').text($('#betamount').val())});
     $('#betamount').on('input', function() {
-      $('.wager').text($('#betamount').val())
+      $('.wager').text($('#betamount').val());
+      $('.winningpot').text(.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
     });
 
     $('#min').click(function(){
       $('.wager').text(0.1);
       $('#betamount').val(.1);
+      $('.winningpot').text(.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
     });
 
-    $('#5').click(function(){
+    $('#point5').click(function(){
       $('.wager').text(0.5);
       $('#betamount').val(0.5);
+      $('.winningpot').text(.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
     });
 
     $('#1').click(function(){
       $('.wager').text(1);
       $('#betamount').val(1);
-      alert($('#betamount').val())
+      $('.winningpot').text(.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
     });
 
-    $('#2').click(function(){
+    $('#max').click(function(){
       $('.wager').text(2);
       $('#betamount').val(2);
+      $('.winningpot').text(.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
     });
 
 
-  },
+    $('#rangeInput').on('input', function() {
+      $('.winningpot').text(.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01); //
+    });
+
+
+  }
 
   initContracts: async () => {
     if (typeof web3 == 'undefined') {

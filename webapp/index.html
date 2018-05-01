@@ -8,21 +8,55 @@
     <title>Etherdice</title>
     <style>
       body{
-        background-image: url("../img/goldencrowns.jpg");
+        background: url("../img/Bglight.jpg") 	#87CEEB;
+        /*background-size: 100%;*/
+        /*background: pink;*/
         text-align: center;
         font-family:sans-serif;
+        font-weight: bold;
         margin:0;
       }
       header{
         color: white;
         font-weight: bold;
-        margin-top: 5%;
+        margin-top: 2%;
         margin-bottom: 5%;
+
         }
+
       .auto-button{
         width: 3.5em;
+        height: 2.75em;
         text-align: center;
+        border-radius: 20%;
+        background-color: transparent;
+        cursor: pointer;
+        font-weight: bold;
+        border-color: grey;
+
         }
+      .auto-button:hover {
+          background-color: gold;
+        }
+
+
+      .action{
+        width: 6em;
+        height: 3em;
+        text-align: center;
+        border-radius: 20%;
+        background-color: transparent;
+        cursor: pointer;
+        font-weight: bold;
+        border-color: grey;
+        vertical-align: top;
+
+      }
+      .action:hover {
+        background-color: #C4FFAE;
+      }
+
+
       .keep{
         margin:0;
         }
@@ -38,24 +72,28 @@
       .place-bet{
         float:left;
         width: 30%;
+        margin-bottom: 100px;
         }
 
       .Analysis{
         float:right;
         width: 30%;
+
         }
 
       .mysterybox{
-        padding-top: 10%;
-        margin: 0% 40% 0% 40%;
+        padding-top: 5%;
+        padding-bottom: 5%;
+        margin: -10% 40% 0% 40%;
         }
-      .mystery{
-        padding-top: 20%;
-        padding-bottom: 20%;
-        background: gold;
-        border-radius: 15%;
-        border: 1px dotted green;
+      #loading{
+        display: none;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+        image-orientation: center;
         }
+
 
       @media (max-width: 670px){
         .place-bet, .Analysis{
@@ -63,18 +101,19 @@
           width: 100%;
           }
         .mysterybox{
-          padding-top: 0;
+          margin-top: -6%;
+          padding-top: 5%;
           padding-bottom: 5%;
         }
 
-        }
+      }
 
       .action{
         margin-top: 5%;
         }
 
       .control{
-        margin-top: 2%;
+        margin-top: 3%;
         margin-bottom: 5%;
         }
 
@@ -86,18 +125,29 @@
         color: white;
         font-weight: bold;
         font-family:sans-serif;
+        text-shadow: -1px 0 blue, 0 1px blue;
         }
       label{
         margin-right: 2%;
         }
+
       .numb{
         width: 3.5em ;
+        height: 1.5em;
         border-radius: 15%;
         padding: .2em;
-        background: gold;
+        background: transparent;
         text-align: right;
+        color: black;
+        font-weight: bold;
         }
-
+      .itemwager{
+        color: white;
+        text-shadow: -1px 0 blue, 0 1px blue;
+      }
+      .eth{
+        margin-left: -10px;
+      }
       /*input[type='range']:after{
         position: absolute;
         word-spacing: 20px;
@@ -107,33 +157,68 @@
 
       footer {
 
-        height: 3%;
+        height: 20px;
         position: fixed;
         left: 0;
         right: 0;
-        background:#6cf;
         bottom: 0;
+        font-weight:normal;
         }
       #x{
         margin-left: 2%;
+        color: white;
         }
 
-      .rainbow {
+      .text-block{
+        position:relative;
+        bottom: 202px;
+        /*text-shadow: 1px 0 brown, 0 -1px brown;*/
+        }
+
+      /*.rainbow {
         background-image: -webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );
         background-image: gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );
         color:transparent;
         -webkit-background-clip: text;
         background-clip: text;
+        }*/
+
+      .slider {
+            -webkit-appearance: none;
+            width: 40%;
+            height: 15px;
+            border-radius: 5px;
+            background: white;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
         }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border: 0;
+            background-image:  url("../img/ethpointer2.png");
+            background-size: 100% 100%;
+            cursor: pointer;
+        }
+
     </style>
   </head>
 
   <body>
     <header>
-        <h1 class = "keep"> Keep </h1>
-        <h1 class = "keep"> Calm </h1>
-        <h3 class = "keep"> and </h3>
-        <h1 class = "keep">Roll On </h1>
+      <div id="frame">
+        <img src="../img/CrownFrame.png" height= "350px" width="350px">
+        <div class ="text-block">
+          <h1 class = "keep"> Keep </h1>
+          <h1 class = "keep"> Calm </h1>
+          <h3 class = "keep"> and </h3>
+          <h1 class = "keep">Roll On </h1>
+        </div>
+      </div>
     </header>
 
     <form oninput="x.value=parseInt(output.value)+parseInt(1)">
@@ -154,38 +239,39 @@
 
           <div class = "bet-value">
 
-            <label> Chance of Winning </label>
-            <p><output id="output" for="rangeInput">50</output>%</p><!-- Just to display selected value -->
+            <label> Chance of Winning  </label>
+            <p><output id="output" for="rangeInput"> 50 </output>%</p><!-- Just to display selected value -->
 
             <div class="control">
-              <sup>0%</sup><input type="range" min="1" max="98" value="50" step="1" list="tickmarks" id="rangeInput" oninput="output.value = rangeInput.value"><sup>100%</sup>
-              <datalist id="tickmarks">
+              <sup>0%</sup><input type="range" min="1" max="98" value="50" step="1" list="tickmarks" class="slider" id="rangeInput" oninput="output.value = rangeInput.value"><sup>100%</sup>
+              <!-- <datalist id="tickmarks">
                 <option value="0 to 20">0</option>
                 <option>20</option>
                 <option>40</option>
                 <option>60</option>
                 <option>80</option>
                 <option>100</option>
-              </datalist>
+              </datalist> -->
             </div>
           </div>
-
-          <button class="action" id="get-last-roll" onclick="compare()">Get Last Roll</button>
-          <button class="action" id="test-roller" onclick="store_bet_value()">Test Roll</button>
+          <div class  ="actionbutton">
+            <button class="action" id="get-last-roll" onclick="compare()">Get Last Roll</button>
+            <button class="action" id="test-roller" onclick="store_bet_value()">Roll</button>
+          </div>
         </div>
 
         <div class="Analysis">
           <h2 > Roll Under <output class=rainbow id="x">51</output> </h2>
 
           <div class="itemwager">
-            <label> Wager </label> <label class="wager">0.1 </label> ETH <br> <!-- do I use form for this again? -->
-            <label> Potential Winning </label> Dummy#<!-- do I use form for this again? -->
-            <p> commission: 1% </p>
+            <label> Wager: </label> <label class="wager">0.1 </label> <label class="eth"> ETH </label> <br> <!-- do I use form for this again? -->
+            <label> Potential Winning: </label> <label class="winningpot">0.098 </label> <label class="eth"> ETH </label> <br><!-- do I use form for this again? -->
+            <label> Commission: 1% </label>
           </div>
         </div>
 
         <div class = "mysterybox">
-          <h1 class=mystery> ??? </h1>
+          <img id="loading" src="../img/whalesloading.gif" alt="loading">
         </div>
 
       </div>
@@ -194,7 +280,8 @@
 
 
     <footer>
-      <font size = "1" > Free Vectors via <a rel="nofollow" href="https://www.vecteezy.com">Vecteezy!</a></font>
+      <font size = "1" > max(dope) images by <a href="https://pngtree.com" >pngtree.com</a></font>
+      <font size = "1" > killer gifs by <a href="https://giphy.com" >giphy.com</a></font>
     </footer>
 
     <!-- <script>
@@ -208,9 +295,22 @@
         document.getElementById("demo").innerHTML = "Good day!";
     }
     </script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script>
+      $.fn.center = function () {
+        this.css("display","block");
+        return this;
+      }
+
+      $("#test-roller").on("click", function(){
+        $("#pokemon").center();
+      });
+    </script>
+
 
     <!-- bootstrap+jquery+popper+moment -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
 
     <!-- truffle -->
     <script src="js/truffle-contract.min.js"></script>
@@ -219,4 +319,5 @@
 
 
   </body>
+
 </html>
