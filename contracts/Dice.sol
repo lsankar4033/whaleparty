@@ -40,7 +40,7 @@ contract Dice is usingOraclize {
     uint256 _trueWager
   );
 
-  constructor() {}
+  constructor() public {}
 
   function roll(uint256 odds) external payable returns (bytes32) {
     uint256 queryPrice = oraclize_getPrice("URL");
