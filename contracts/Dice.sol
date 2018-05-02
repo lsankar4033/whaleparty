@@ -8,34 +8,38 @@ import "./zeppelin/SafeMath.sol";
 contract Dice is usingOraclize, Ownable {
   using SafeMath for uint256;
 
-  // TODO: Remove once we start deleting old games from contract
   uint256 constant INVALID_ROLL = 0;
 
   // Depends on slider
   uint256 constant MIN_ROLL = 1;
   uint256 constant MAX_ROLL = 100;
 
-  // TODO: Perhaps add something to track if authenticity proof was invalid
+  // TODO: Is this right?
+  bytes32 constant DEFAULT_BYTES32 = "";
+
   struct GameData {
     address player;
     uint256 odds; // represents the roll under which all winning rolls must lie
     uint256 trueWager;
     uint256 roll; // only populated when game is complete
+    uint256 maxProfit; // max profit calculated at roll time
     bool active;
   }
 
   mapping(bytes32 => GameData) _queryToGameData;
+  mapping(address => bytes32) _playerToCurrentQuery;
 
   // For display purposes only
   uint256 public completedGames = 0;
 
   event GameCompleted(
+    address indexed _player,
     bytes32 indexed _qId,
     uint256 _roll
   );
 
-  event RollSubmitted(
-    address indexed _sender,
+  event GameSubmitted(
+    address indexed _player,
     bytes32 indexed _qId,
     uint256 _odds,
     uint256 _trueWager
@@ -64,14 +68,18 @@ contract Dice is usingOraclize, Ownable {
   // USER ACTIONS
   ///////////////
 
-  function roll(uint256 odds) external payable returns (bytes32) {
+  // NOTE: Currently 1% of contract balance. Can be tuned
+  function maxProfit() public view returns(uint256) {
+    return address(this).balance / 100;
+  }
+
+  function roll(uint256 odds) external payable {
     uint256 queryPrice = oraclize_getPrice("URL");
 
-    // TODO: Also subtract creator fee!
     // player's wager
     require(msg.value > queryPrice);
     uint256 wagerAfterQuery = msg.value - queryPrice;
-    uint256 fee = computeRollFee(wagerAfterQuery);
+    uint256 fee = _computeRollFee(wagerAfterQuery);
     uint256 trueWager = wagerAfterQuery - fee;
 
     // NOTE: Can probably simplify this to something static
@@ -79,21 +87,21 @@ contract Dice is usingOraclize, Ownable {
 
     // TODO: When we need to encrypt random.org encryption key, this will need to become a 'nested' query
     bytes32 qId = oraclize_query("URL", queryStr);
-    emit RollSubmitted(msg.sender, qId, odds, trueWager);
+    emit GameSubmitted(msg.sender, qId, odds, trueWager);
 
     _queryToGameData[qId] = GameData(
       msg.sender,
       odds,
       trueWager,
       INVALID_ROLL,
+      maxProfit(),
       true
     );
-
-    return qId;
+    _playerToCurrentQuery[msg.sender] = qId;
   }
 
   // NOTE: 1%, can be modified!
-  function computeRollFee(uint256 wagerAfterQuery) private pure returns (uint256) {
+  function _computeRollFee(uint256 wagerAfterQuery) private pure returns (uint256) {
     return SafeMath.div(wagerAfterQuery, 100);
   }
 
@@ -121,54 +129,78 @@ contract Dice is usingOraclize, Ownable {
     // TODO: Delete game in the future to save space
     _queryToGameData[qId].roll = roll;
     _queryToGameData[qId].active = false;
+    _playerToCurrentQuery[msg.sender] = DEFAULT_BYTES32;
 
     // game completed!
     completedGames.add(1);
-    emit GameCompleted(qId, roll);
+    emit GameCompleted(_queryToGameData[qId].player, qId, roll);
   }
 
   function _calculatePayout(bytes32 qId, uint256 roll) internal view returns(uint256) {
-    uint256 odds = _queryToGameData[qId].odds;
+    GameData memory game = _queryToGameData[qId];
+
+    uint256 odds = game.odds;
     if (roll > odds) {
       return 0;
     } else {
-      uint256 wager = _queryToGameData[qId].trueWager;
+      uint256 wager = game.trueWager;
+      uint256 maxProfit = game.maxProfit;
 
       // payout = wager + winnings
       // winnings = (100 - x) / x
       uint256 invOdds = MAX_ROLL.sub(odds);
       uint256 winnings = invOdds.div(odds);
-      return wager.add(winnings);
+      uint256 defaultWinnings = wager.add(winnings);
+
+      uint256 availableBalance = _getAvailableBalance() ;
+      if (defaultWinnings > availableBalance) {
+        // NOTE: Probably should be less than all of the available balance!
+        return availableBalance;
+      }
+
+      else if (winnings > maxProfit) {
+        return wager.add(maxProfit);
+      }
+
+      else {
+        return defaultWinnings;
+      }
     }
+  }
+
+  function _getAvailableBalance() internal returns(uint256) {
+    return address(this).balance;
   }
 
   function _resultToRoll(string result) internal returns(uint256) {
     return parseInt(result);
   }
 
-  function getRoll(bytes32 qId) public returns(uint256) {
-    // Is this the right check?
-    if (qId == "") {
-      return INVALID_ROLL;
-    } else {
-      return _queryToGameData[qId].roll;
-    }
+  function hasActiveRoll() external view returns(bool) {
+    return _playerToCurrentQuery[msg.sender] != DEFAULT_BYTES32;
   }
 
-  function cancelRoll(bytes32 qId) public {
-    GameData memory game = _queryToGameData[qId];
+  function cancelActiveRoll() external {
+    bytes32 qId = _playerToCurrentQuery[msg.sender];
 
-    // Canceller must be player
-    require(game.player == msg.sender);
+    // Must have an active roll
+    require(qId != DEFAULT_BYTES32);
 
-    // Must be an active game
-    require(game.active);
+    // Sanity check that game has same player associated with it
+    require(_queryToGameData[qId].player == msg.sender);
 
-    // Refund player
-    game.player.transfer(game.trueWager);
+    // cancel role
+    _queryToGameData[qId].active = false;
+    _playerToCurrentQuery[msg.sender] = DEFAULT_BYTES32;
 
-    // TODO: Delete game in the future
-    // Set game inactive
-    _queryToGameData[qId].active = true;
+    uint256 refund = _queryToGameData[qId].trueWager;
+    uint256 availableBalance = _getAvailableBalance();
+
+    if (refund > availableBalance) {
+      // NOTE: Probably should be less than all of the available balance!
+      _queryToGameData[qId].player.transfer(availableBalance);
+    } else {
+      _queryToGameData[qId].player.transfer(refund);
+    }
   }
 }
