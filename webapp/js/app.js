@@ -3,7 +3,7 @@ App = {
   diceContract: null,
 
   init: async () => {
-    await App.initContracts();
+    //await App.initContracts();
 
     $('#test-roller').click( (e) => App.roll(1, 6) );
     $('#get-last-roll').click( App.getLastRoll );
@@ -46,7 +46,7 @@ App = {
     });
 
 
-  }
+  },
 
   initContracts: async () => {
     if (typeof web3 == 'undefined') {

@@ -295,29 +295,23 @@
         document.getElementById("demo").innerHTML = "Good day!";
     }
     </script> -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
-    <script>
-      $.fn.center = function () {
-        this.css("display","block");
-        return this;
-      }
-
-      $("#test-roller").on("click", function(){
-        $("#pokemon").center();
-      });
-    </script>
-
 
     <!-- bootstrap+jquery+popper+moment -->
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
     <!-- truffle -->
     <script src="js/truffle-contract.min.js"></script>
 
     <script src="js/app.js"></script>
 
+    <script>
+      $("#test-roller").on("click", function(){
+        $('#loading').removeClass('display');
+        $("#loading").css("display","block");
+
+      });
+    </script>
+
 
   </body>
-
 </html>
