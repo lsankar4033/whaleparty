@@ -11,6 +11,7 @@
         background: url("../img/Bglight.jpg") 	#87CEEB;
         /*background-size: 100%;*/
         /*background: pink;*/
+        align-items: center;
         text-align: center;
         font-family:sans-serif;
         font-weight: bold;
@@ -20,8 +21,9 @@
         color: white;
         font-weight: bold;
         margin-top: 2%;
-        margin-bottom: 5%;
-
+        margin-bottom: -8%;
+        align-items: center;
+        text-align: center;
         }
 
       .auto-button{
@@ -36,9 +38,8 @@
 
         }
       .auto-button:hover {
-          background-color: gold;
+          background: linear-gradient(-90deg, gold, yellow);
         }
-
 
       .action{
         width: 6em;
@@ -50,10 +51,11 @@
         font-weight: bold;
         border-color: grey;
         vertical-align: top;
+        margin-top: 5%;
 
       }
       .action:hover {
-        background-color: #C4FFAE;
+        background: linear-gradient(-90deg, #C4FFAE, #87CEFA);
       }
 
 
@@ -79,38 +81,62 @@
         float:right;
         width: 30%;
 
+
         }
 
+
+      .whitelabel{
+          text-shadow: -1px 0 blue, 0 1px blue;
+          color: white;
+
+        }
+
+
+
       .mysterybox{
-        padding-top: 5%;
+        padding-top: 0 ;
         padding-bottom: 5%;
-        margin: -10% 40% 0% 40%;
+        padding-left: 36%;
+        padding-right: 36%;
+        align-items: center;
+        text-align: center;
+
         }
       #loading{
-        display: none;
         margin-left: auto;
         margin-right: auto;
         width: 100%;
+        display: none;
         image-orientation: center;
         }
 
 
-      @media (max-width: 670px){
+      @media (max-width: 800px){
         .place-bet, .Analysis{
           float: none;
           width: 100%;
+
           }
+        .Analysis{
+          margin-bottom: 5%;
+          margin-top: -10%;
+
+          }
+        .place-bet{
+          margin-top: -15%;
+          }
+
         .mysterybox{
           margin-top: -6%;
           padding-top: 5%;
           padding-bottom: 5%;
+          padding-left: 20%;
+          padding-right: 20%;
+          }
+
         }
 
-      }
 
-      .action{
-        margin-top: 5%;
-        }
 
       .control{
         margin-top: 3%;
@@ -141,19 +167,10 @@
         color: black;
         font-weight: bold;
         }
-      .itemwager{
-        color: white;
-        text-shadow: -1px 0 blue, 0 1px blue;
-      }
+
       .eth{
         margin-left: -10px;
-      }
-      /*input[type='range']:after{
-        position: absolute;
-        word-spacing: 20px;
-        left: 0px;
-        top: 0px;
-        }*/
+        }
 
       footer {
 
@@ -166,8 +183,10 @@
         }
       #x{
         margin-left: 2%;
-        color: white;
+        color: black;
+        text-shadow: none;
         }
+
 
       .text-block{
         position:relative;
@@ -184,26 +203,87 @@
         }*/
 
       .slider {
-            -webkit-appearance: none;
-            width: 40%;
-            height: 15px;
-            border-radius: 5px;
-            background: white;
-            opacity: 0.7;
-            -webkit-transition: .2s;
-            transition: opacity .2s;
+        -webkit-appearance: none;
+        width: 40%;
+        height: 15px;
+        border-radius: 5px;
+        background: white;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
         }
 
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 40px;
-            height: 40px;
-            border: 0;
-            background-image:  url("../img/ethpointer2.png");
-            background-size: 100% 100%;
-            cursor: pointer;
+      .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 40px;
+        height: 40px;
+        border: 0;
+        background-image:  url("../img/ethpointer2.png");
+        background-size: 100% 100%;
+        cursor: pointer;
         }
+
+      #winningnumber{
+        width: 100%;
+        display: none;
+        font-size: 45px;
+        align-items: center;
+        text-align: center;
+      }
+      #roll-again{
+        width: 5em;
+        text-align: center;
+        border-radius: 20%;
+        background: linear-gradient(-90deg, #87CEFA, 	#9370DB);
+        cursor: pointer;
+        font-weight: bold;
+        border-color: grey;
+        margin-top: 5%;
+        font-size: 1.25em;
+        color: white;
+        display: none;
+      }
+      #roll-again:hover{
+        background: linear-gradient(-90deg, #C4FFAE, #87CEFA);
+      }
+
+      #second-roll-under{
+        display: none;
+      }
+      .fade2{
+        display: none;
+      }
+      .rainbow-border{
+        width: 100%;
+        height: 10px;
+        background-image: repeating-linear-gradient(-90deg, #BA55D3, #C4FFAE, #87CEFA);
+        background-size: 100% 10px;
+        background-repeat:no-repeat;
+        padding-bottom: 5%;
+
+      }
+      #win, #lose{
+        display:none;
+      }
+
+      .winner, .loser{
+        width: 25px;
+        /*display: inline-block;*/
+      }
+
+      #heart{
+        width:20px;
+      }
+
+      #prize{
+        width:50px;
+      }
+
+      #sad{
+        width:50px;
+      }
+
 
     </style>
   </head>
@@ -217,11 +297,12 @@
           <h1 class = "keep"> Calm </h1>
           <h3 class = "keep"> and </h3>
           <h1 class = "keep">Roll On </h1>
+
         </div>
       </div>
     </header>
 
-    <form oninput="x.value=parseInt(output.value)+parseInt(1)">
+
       <div class = "wrap">
         <div class = "place-bet">
           <h2> Place your bet </h2>
@@ -240,42 +321,81 @@
           <div class = "bet-value">
 
             <label> Chance of Winning  </label>
-            <p><output id="output" for="rangeInput"> 50 </output>%</p><!-- Just to display selected value -->
+            <p><output id="chanceofwinning" for="rangeInput"> 50 </output>%</p><!-- Just to display selected value -->
 
             <div class="control">
-              <sup>0%</sup><input type="range" min="1" max="98" value="50" step="1" list="tickmarks" class="slider" id="rangeInput" oninput="output.value = rangeInput.value"><sup>100%</sup>
+              <sup>0%</sup><input type="range" min="1" max="98" value="50" step="1" list="tickmarks" class="slider" id="rangeInput" ><sup>100%</sup>
               <!-- <datalist id="tickmarks">
                 <option value="0 to 20">0</option>
                 <option>20</option>
                 <option>40</option>
                 <option>60</option>
                 <option>80</option>
-                <option>100</option>
+                <option>100</option>second-roll-under
               </datalist> -->
             </div>
           </div>
           <div class  ="actionbutton">
             <button class="action" id="get-last-roll" onclick="compare()">Get Last Roll</button>
             <button class="action" id="test-roller" onclick="store_bet_value()">Roll</button>
+
           </div>
         </div>
 
         <div class="Analysis">
-          <h2 > Roll Under <output class=rainbow id="x">51</output> </h2>
-
-          <div class="itemwager">
-            <label> Wager: </label> <label class="wager">0.1 </label> <label class="eth"> ETH </label> <br> <!-- do I use form for this again? -->
-            <label> Potential Winning: </label> <label class="winningpot">0.098 </label> <label class="eth"> ETH </label> <br><!-- do I use form for this again? -->
-            <label> Commission: 1% </label>
-          </div>
+          <h2 > Roll Under <output  id="x">&nbsp;51</output> </h2>
+          <label class="whitelabel" color="white"> Wager: </label> <label class="wager">0.1 </label> <label  class="eth"> ETH </label> <br>
+          <label class="whitelabel"> Potential Winning: </label> <label  class="winningpot">0.09800000 </label> <label class="eth"> ETH </label> <br>
+          <label class="whitelabel"> Commission: </label> 1%
         </div>
 
-        <div class = "mysterybox">
+
+
+        <div class = "mysterybox"  >
+          <h2 id="second-roll-under"> Roll Under: <output  color:"black" id="x2"></output> </h2>
           <img id="loading" src="../img/whalesloading.gif" alt="loading">
+
+          <div class="fade2" >
+
+            <div class="rainbow-border">  </div>
+            <label class = "fade2" style="text-align:center;" > You Rolled </label><br>
+            <label class="fade2" id ="winningnumber" style="text-align:center;" >  </label> <br><br>
+          </div>
+
+          <div class= "result" id="win">
+
+            <img class="winner" src="../img/sunhappy.png">
+            <img  class="winner" src="../img/whale2.png">
+            <img  class="winner" src="../img/conf2.png">
+
+            <img id="prize" class="winner" src="../img/prize.png">
+
+            <img  class="winner" src="../img/conf3.png">
+            <img  class="winner" src="../img/whale1.png">
+            <img  class="winner" src="../img/sunhappy.png">
+
+
+          </div>
+          <div class= "result" id="lose">
+            <img  class="loser" src="../img/cloud2.png">
+            <img class="loser" src="../img/cloud2.png">
+
+            <img class="loser" id="sad" src="../img/sad1.png">
+            <img id="heart" class="loser" src="../img/heartbroken.png">
+
+
+            <img class="loser" src="../img/cloud2.png">
+            <img class="loser" src="../img/cloud2.png">
+          </div>
+          <br>
+          <button class="fade2" id="roll-again">Roll Again</button>
+
+
         </div>
 
       </div>
-    </form>
+
+
 
 
 
@@ -304,13 +424,7 @@
 
     <script src="js/app.js"></script>
 
-    <script>
-      $("#test-roller").on("click", function(){
-        $('#loading').removeClass('display');
-        $("#loading").css("display","block");
 
-      });
-    </script>
 
 
   </body>
