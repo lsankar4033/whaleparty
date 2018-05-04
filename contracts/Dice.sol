@@ -189,7 +189,6 @@ contract Dice is usingOraclize, Ownable {
 
       uint256 availableBalance = _getAvailableBalance() ;
       if (defaultWinnings > availableBalance) {
-        // NOTE: Probably should be less than all of the available balance!
         return availableBalance;
       }
 
@@ -203,8 +202,9 @@ contract Dice is usingOraclize, Ownable {
     }
   }
 
+  // NOTE: Set to less than total balance so contract balance can't ever be drained
   function _getAvailableBalance() internal returns(uint256) {
-    return address(this).balance;
+    return address(this).balance / 2;
   }
 
   function _resultToRoll(string result) internal returns(uint256) {
@@ -232,7 +232,6 @@ contract Dice is usingOraclize, Ownable {
     uint256 availableBalance = _getAvailableBalance();
 
     if (refund > availableBalance) {
-      // NOTE: Probably should be less than all of the available balance!
       _queryToGameData[qId].player.transfer(availableBalance);
     } else {
       _queryToGameData[qId].player.transfer(refund);
