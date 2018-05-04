@@ -13,9 +13,10 @@ contract Dice is usingOraclize, Ownable {
   // Depends on slider
   uint256 constant MIN_ROLL = 1;
   uint256 constant MAX_ROLL = 100;
+  bytes32 constant DEFAULT_BYTES32 = 0x0000000000000000000000000000000000000000000000000000000000000000;
 
-  // TODO: Is this right?
-  bytes32 constant DEFAULT_BYTES32 = "";
+  // This governs how much gas we'll have for the oraclize callback
+  uint256 constant ORACLIZE_GAS_COST = 500000;
 
   struct GameData {
     address player;
@@ -30,20 +31,33 @@ contract Dice is usingOraclize, Ownable {
   mapping(bytes32 => GameData) public _queryToGameData;
   mapping(address => bytes32) public _playerToCurrentQuery;
 
+  // TODO: Remove! or make private
+  mapping(address => uint256) public _playerToPayouts;
+
+  // TODO: Remove!
+  string public lastQuery;
+  string public lastResult;
+  uint256 public lastPayout;
+
   // For display purposes only
   uint256 public completedGames = 0;
 
   event GameCompleted(
-    address indexed _player,
-    bytes32 indexed _qId,
-    uint256 _roll
+    address indexed player,
+    bytes32 indexed qId,
+    uint256 roll
   );
 
   event GameSubmitted(
-    address indexed _player,
-    bytes32 indexed _qId,
-    uint256 _odds,
-    uint256 _trueWager
+    address indexed player,
+    bytes32 indexed qId,
+    uint256 odds,
+    uint256 trueWager
+  );
+
+  event PlayerPaidOut(
+    address indexed player,
+    uint256 payout
   );
 
   constructor() public {}
@@ -61,7 +75,7 @@ contract Dice is usingOraclize, Ownable {
     msg.sender.transfer(balance);
   }
 
-  // TODO: Should this be access restricted?
+  // TODO: Access restrict this to whitelist
   function addBalance() external payable {
   }
 
@@ -69,9 +83,9 @@ contract Dice is usingOraclize, Ownable {
   // USER ACTIONS
   ///////////////
 
-  // NOTE: Currently 1% of contract balance. Can be tuned
+  // NOTE: Currently 10% of contract balance. Can be tuned
   function getMaxProfit() public view returns(uint256) {
-    return address(this).balance / 100;
+    return address(this).balance / 10;
   }
 
   function rollDice(uint256 odds) external payable {
@@ -87,7 +101,10 @@ contract Dice is usingOraclize, Ownable {
     string memory queryStr = _getQueryStr(MIN_ROLL, MAX_ROLL);
 
     // TODO: When we need to encrypt random.org encryption key, this will need to become a 'nested' query
-    bytes32 qId = oraclize_query("URL", queryStr);
+    bytes32 qId = oraclize_query("URL", queryStr, ORACLIZE_GAS_COST);
+
+    lastQuery = queryStr;
+
     emit GameSubmitted(msg.sender, qId, odds, trueWager);
 
     _queryToGameData[qId] = GameData(
@@ -108,7 +125,10 @@ contract Dice is usingOraclize, Ownable {
 
   // NOTE: Doesn't use API key so that we don't have to do all the fancy encryption stuff.
   function _getQueryStr(uint256 min, uint256 max) internal returns(string) {
-    return strConcat("https://www.random.org/integers/?num=", uint2str(min), "&max=", uint2str(max), "&col=1&base=10&format=plain&rnd=new");
+    // TODO: encrypted query...
+    //string memory newStr = strConcat("[URL] ['json(https://api.random.org/json-rpc/1/invoke).result.random[\"serialNumber\",\"data\"]', '\\n{\"jsonrpc\":\"2.0\",\"method\":\"generateSignedIntegers\",\"params\":{\"apiKey\":${[decrypt] BKg3TCs7lkzNr1kR6pxjPCM2SOejcFojUPMTOsBkC/47HHPf1sP2oxVLTjNBu+slR9SgZyqDtjVOV5Yzg12iUkbubp0DpcjCEdeJTHnGwC6gD729GUVoGvo96huxwRoZlCjYO80rWq2WGYoR/LC3WampDuvv2Bo=},\"n\":1,\"min\":", uint2str(min), "\"max\"": uint2str(max), "\"replacement\":true,\"base\":10${[identity] \"}\"},\"id\":1${[identity] \"}\"}']")
+
+    return strConcat("https://www.random.org/integers/?num=1&min=", uint2str(min), "&max=", uint2str(max), "&col=1&base=10&format=plain&rnd=new");
   }
 
   function __callback(bytes32 qId, string result, bytes proof) public {
@@ -120,20 +140,32 @@ contract Dice is usingOraclize, Ownable {
 
     // TODO: Check authenticity proof
 
+    // TODO: Remove
+    lastResult = result;
+
     // Payout player
     uint256 roll = _resultToRoll(result);
     uint256 payout = _calculatePayout(qId, roll);
+    address player = _queryToGameData[qId].player;
     if (payout > 0) {
-      _queryToGameData[qId].player.transfer(payout);
+      // TODO: emit an event!
+      player.transfer(payout);
+      emit PlayerPaidOut(player, payout);
     }
+
+    // TODO: Remove
+    lastPayout = payout;
 
     // TODO: Delete game in the future to save space
     _queryToGameData[qId].roll = roll;
     _queryToGameData[qId].active = false;
-    _playerToCurrentQuery[msg.sender] = DEFAULT_BYTES32;
+    _playerToCurrentQuery[player] = DEFAULT_BYTES32;
+
+    // TODO: Remove
+    _playerToPayouts[player] += payout;
 
     // game completed!
-    completedGames.add(1);
+    completedGames = completedGames.add(1);
     emit GameCompleted(_queryToGameData[qId].player, qId, roll);
   }
 

@@ -87,8 +87,6 @@ App = {
       $(".fade2").fadeOut();
       $(".result").fadeOut();
     });
-
-
   },
 
   initContracts: async () => {
@@ -97,8 +95,7 @@ App = {
     } else {
       App.web3Provider = web3.currentProvider;
 
-      // TODO: Conditionally use 'actual' Dice.json
-      let contractData = await $.getJSON('MockedDice.json');
+      let contractData = await $.getJSON('Dice.json');
 
       let abstractContract = TruffleContract(contractData);
       abstractContract.setProvider(App.web3Provider);
