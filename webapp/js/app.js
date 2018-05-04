@@ -61,8 +61,8 @@ App = {
       setTimeout(function(){
       $("#loading").css("display","none");
       var s = document.getElementById("winningnumber");
-      s.value = $('#rangeInput').val()*1+1;
-      $("#winningnumber").text($('#rangeInput').val()*1+1);
+      s.value = $('#rangeInput').val()*1+0;
+      $("#winningnumber").text($('#rangeInput').val()*1+0);
 
 
       if ($("#winningnumber").val() <= $('#rangeInput').val()) {
