@@ -20,7 +20,9 @@ App = {
 
     App.setupRollUI();
 
-    $("#roll-btn").on("click", App.roll);
+    $("#roll-btn").click(App.roll);
+
+    $("#cancel-btn").click(App.cancelRoll);
 
     $('#roll-again').click(function(){
       $(".place-bet").fadeIn();
@@ -46,6 +48,7 @@ App = {
     }
   },
 
+  // TODO: Display num completed games?
   initPage: async () => {
     App.maxProfitWei = await App.diceContract.getMaxProfit();
     let hasActiveRoll = await App.diceContract.hasActiveRoll();
@@ -54,6 +57,8 @@ App = {
       // Display roll prompt
       $('#roll-ongoing').fadeOut( () => $('#roll-ongoing').hide() );
       $('#roll-prompt').show();
+    } else {
+      $('#roll-ongoing-content').show();
     }
   },
 
@@ -61,12 +66,16 @@ App = {
     // Display roll ongoing
     $('#roll-prompt').hide();
     $('#roll-ongoing').show();
+    $('#roll-ongoing-content').show();
+
     $('#loading').fadeIn();
 
     // Submit roll to contract
     let odds = parseInt($('#x').val());
     let wager = ethToWei(parseFloat($('#wager').text()));
     await App.diceContract.rollDice(odds, {value: wager});
+
+    // TODO: Add modal with tx info
 
     // TODO: Add back in winning element when we get appropriate GameCompleted event
     //$("#x2").text($('#x').val());
@@ -91,6 +100,12 @@ App = {
       //// $(".place-bet").fadeIn();
       //// $(".Analysis").fadeIn();
     //}, 3000)
+  },
+
+  cancelRoll: async () => {
+    await App.diceContract.cancelActiveRoll();
+
+    // TODO: Add modal with tx info
   },
 
   // Sets up roll UI for selecting odds + bet size
