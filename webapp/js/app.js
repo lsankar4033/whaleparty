@@ -3,7 +3,7 @@ App = {
   diceContract: null,
 
   init: async () => {
-    //await App.initContracts();
+    await App.initContracts();
 
     $('#test-roller').click( (e) => App.roll(1, 6) );
     $('#get-last-roll').click( App.getLastRoll );
@@ -14,7 +14,6 @@ App = {
       $("#x").text($('#rangeInput').val()*1+1);
       $("#chanceofwinning").text($('#rangeInput').val());
     });
-
 
     $('#betamount').on('input', function() {
       $('.wager').text($('#betamount').val());
@@ -64,7 +63,6 @@ App = {
       s.value = $('#rangeInput').val()*1+0;
       $("#winningnumber").text($('#rangeInput').val()*1+0);
 
-
       if ($("#winningnumber").val() <= $('#rangeInput').val()) {
         $("#winningnumber").css("color","green");
         $("#win").css("display","block");
@@ -95,7 +93,9 @@ App = {
     } else {
       App.web3Provider = web3.currentProvider;
 
-      let contractData = await $.getJSON('Dice.json');
+      let contractData = await $.getJSON('contracts/Dice.json');
+
+      console.log(`${JSON.stringify(contractData)}`);
 
       let abstractContract = TruffleContract(contractData);
       abstractContract.setProvider(App.web3Provider);
