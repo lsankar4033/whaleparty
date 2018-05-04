@@ -44,20 +44,20 @@ contract Dice is usingOraclize, Ownable {
 
   event RollCompleted(
     address indexed player,
-    bytes32 indexed qId,
-    uint256 roll
+    uint256 trueWager,
+    uint256 odds,
+    uint256 roll,
+    uint256 totalPayout
   );
 
   event RollSubmitted(
     address indexed player,
-    bytes32 indexed qId,
     uint256 odds,
     uint256 trueWager
   );
 
   event RollCancelled(
-    address indexed player,
-    bytes32 indexed qId
+    address indexed player
   );
 
   event PlayerPaidOut(
@@ -113,7 +113,7 @@ contract Dice is usingOraclize, Ownable {
 
     lastQuery = queryStr;
 
-    emit RollSubmitted(msg.sender, qId, odds, trueWager);
+    emit RollSubmitted(msg.sender, odds, trueWager);
 
     _queryToGameData[qId] = GameData(
       msg.sender,
@@ -143,8 +143,10 @@ contract Dice is usingOraclize, Ownable {
     // Must be called by oraclize
     require(msg.sender == oraclize_cbAddress());
 
+    GameData memory game = _queryToGameData[qId];
+
     // Game must not have been cancelled or completed
-    require(_queryToGameData[qId].active);
+    require(game.active);
 
     // TODO: Check authenticity proof
 
@@ -154,9 +156,8 @@ contract Dice is usingOraclize, Ownable {
     // Payout player
     uint256 roll = _resultToRoll(result);
     uint256 payout = _calculatePayout(qId, roll);
-    address player = _queryToGameData[qId].player;
+    address player = game.player;
     if (payout > 0) {
-      // TODO: emit an event!
       player.transfer(payout);
       emit PlayerPaidOut(player, payout);
     }
@@ -165,8 +166,8 @@ contract Dice is usingOraclize, Ownable {
     lastPayout = payout;
 
     // TODO: Delete game in the future to save space
-    _queryToGameData[qId].roll = roll;
-    _queryToGameData[qId].active = false;
+    game.roll = roll;
+    game.active = false;
     _playerToCurrentQuery[player] = DEFAULT_BYTES32;
 
     // TODO: Remove
@@ -174,7 +175,7 @@ contract Dice is usingOraclize, Ownable {
 
     // game completed!
     completedGames = completedGames.add(1);
-    emit RollCompleted(_queryToGameData[qId].player, qId, roll);
+    emit RollCompleted(player, game.trueWager, game.odds, roll, payout);
   }
 
   function _calculatePayout(bytes32 qId, uint256 roll) internal view returns(uint256) {
@@ -246,6 +247,6 @@ contract Dice is usingOraclize, Ownable {
       player.transfer(refund);
     }
 
-    emit RollCancelled(player, qId);
+    emit RollCancelled(player);
   }
 }

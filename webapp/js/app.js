@@ -6,6 +6,14 @@ function weiToEth(wei) {
   return wei / (10 ** 18);
 }
 
+// TODO: Determine this based on network?
+const defaultGasPrice = 2000000000;
+
+// NOTE: This function determines gas limit for a certain gas estimate
+function gasLimit(gasEstimate) {
+  return 2 * gasEstimate;
+}
+
 App = {
   web3Provider: null,
   diceContract: null,
@@ -16,7 +24,7 @@ App = {
     await App.initContracts();
     await App.initPage();
 
-    // TODO: Set up Eth event listeners
+    App.setupEventListeners();
 
     App.setupRollUI();
 
@@ -31,6 +39,17 @@ App = {
       $(".fade2").fadeOut();
       $(".result").fadeOut();
     });
+  },
+
+  // TODO: Listener for payouts!
+  setupEventListeners: () => {
+    let currentPlayer = web3.eth.accounts[0];
+
+    let completed = App.diceContract.RollCompleted({player: currentPlayer}, {toBlock: 'latest'});
+    let cancelled = App.diceContract.RollCancelled({player: currentPlayer}, {toBlock: 'latest'});
+
+    cancelled.watch(App.cancelledHandler);
+    completed.watch(App.completedHandler);
   },
 
   initContracts: async () => {
@@ -63,49 +82,85 @@ App = {
   },
 
   roll: async (min, max) => {
+    // Submit roll to contract
+    let odds = parseInt($('#x').val());
+    let wager = ethToWei(parseFloat($('#wager').text()));
+
+    let gasEstimate = await App.diceContract.rollDice.estimateGas(odds, {value: wager});
+    App.diceContract.rollDice(odds,
+      {
+        gas: gasLimit(gasEstimate),
+        gasPrice: defaultGasPrice,
+        value: wager
+      });
+
     // Display roll ongoing
     $('#roll-prompt').hide();
     $('#roll-ongoing').show();
     $('#roll-ongoing-content').show();
-
     $('#loading').fadeIn();
-
-    // Submit roll to contract
-    let odds = parseInt($('#x').val());
-    let wager = ethToWei(parseFloat($('#wager').text()));
-    await App.diceContract.rollDice(odds, {value: wager});
-
-    // TODO: Add modal with tx info
-
-    // TODO: Add back in winning element when we get appropriate GameCompleted event
-    //$("#x2").text($('#x').val());
-    //$("#x2").css("color","black");
-    //$("#second-roll-under").fadeIn();
-    //$("#winningnumber").css("display","none");
-    //setTimeout(function(){
-      //$("#loading").css("display","none");
-      //var s = document.getElementById("winningnumber");
-      //s.value = $('#rangeInput').val()*1+0;
-      //$("#winningnumber").text($('#rangeInput').val()*1+0);
-
-      //if ($("#winningnumber").val() <= $('#rangeInput').val()) {
-        //$("#winningnumber").css("color","green");
-        //$("#win").css("display","block");
-
-      //} else {
-        //$("#winningnumber").css("color","red");
-        //$("#lose").css("display","block");
-      //}
-      //$(".fade2").fadeIn();
-      //// $(".place-bet").fadeIn();
-      //// $(".Analysis").fadeIn();
-    //}, 3000)
   },
 
   cancelRoll: async () => {
     await App.diceContract.cancelActiveRoll();
 
     // TODO: Add modal with tx info
+  },
+
+  // Handler for RollCancelled event from smart contract
+  cancelledHandler: (err, result) => {
+    if (!err) {
+      let playerAddr = result.args.player;
+
+      console.log(`Cancelled player: ${playerAddr}`);
+
+      // If it's for *this* player, change to roll-prompt screen
+      if (web3.eth.accounts[0] == playerAddr) {
+        $('#roll-ongoing').hide();
+        $('#roll-prompt').show();
+      }
+    } else {
+      console.log(`Error waiting on cancel event: ${err}`);
+    }
+  },
+
+  // Handler for RollCompleted event from smart contract
+  completedHandler: (err, result) => {
+    console.log(`Received completed event! err: ${err} result: ${result}`);
+
+    if (!err) {
+      let playerAddr = result.args.player;
+
+      console.log(`Completed player: ${playerAddr}`);
+
+      if (web3.eth.accounts[0] == playerAddr) {
+        // TODO: Perhaps also display wager, odds, payout, etc.
+        let wager = result.args.trueWager;
+        let odds = result.args.odds;
+        let roll = result.args.roll;
+        let totalPayout = result.args.totalPayout;
+        let profit = totalPayout - wager;
+
+        console.log(`${wager} ${odds} ${roll} ${totalPayout}`);
+
+        $('#winningnumber').text(roll);
+
+        // Change visual elements based on win or loss
+        if (totalPayout > 0) {
+          $("#winningnumber").css("color","green");
+          $('#win').show();
+        } else {
+          $("#winningnumber").css("color","red");
+          $('#lose').show();
+        }
+
+        $('#roll-prompt').hide();
+        $('#roll-ongoing').hide();
+        $('#roll-finished').show();
+      } else {
+        console.log(`Error waiting on cancel event: ${err}`);
+      }
+    }
   },
 
   // Sets up roll UI for selecting odds + bet size
