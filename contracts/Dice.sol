@@ -89,6 +89,9 @@ contract Dice is usingOraclize, Ownable {
   }
 
   function rollDice(uint256 odds) external payable {
+    // Can't roll more than once at a time!
+    require(!hasActiveRoll());
+
     uint256 queryPrice = oraclize_getPrice("URL");
 
     // player's wager
