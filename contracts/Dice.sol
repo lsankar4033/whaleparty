@@ -1,9 +1,9 @@
 pragma solidity ^0.4.4;
 
-import "./oraclize/oraclizeAPI.sol";
+import "./oraclizeAPI.sol";
 
-import "./zeppelin/Ownable.sol";
-import "./zeppelin/SafeMath.sol";
+import "./Ownable.sol";
+import "./SafeMath.sol";
 
 contract Dice is usingOraclize, Ownable {
   using SafeMath for uint256;
@@ -26,8 +26,9 @@ contract Dice is usingOraclize, Ownable {
     bool active;
   }
 
-  mapping(bytes32 => GameData) _queryToGameData;
-  mapping(address => bytes32) _playerToCurrentQuery;
+  // TODO: Un-public these things after I'm done debugging
+  mapping(bytes32 => GameData) public _queryToGameData;
+  mapping(address => bytes32) public _playerToCurrentQuery;
 
   // For display purposes only
   uint256 public completedGames = 0;
@@ -69,11 +70,11 @@ contract Dice is usingOraclize, Ownable {
   ///////////////
 
   // NOTE: Currently 1% of contract balance. Can be tuned
-  function maxProfit() public view returns(uint256) {
+  function getMaxProfit() public view returns(uint256) {
     return address(this).balance / 100;
   }
 
-  function roll(uint256 odds) external payable {
+  function rollDice(uint256 odds) external payable {
     uint256 queryPrice = oraclize_getPrice("URL");
 
     // player's wager
@@ -94,7 +95,7 @@ contract Dice is usingOraclize, Ownable {
       odds,
       trueWager,
       INVALID_ROLL,
-      maxProfit(),
+      getMaxProfit(),
       true
     );
     _playerToCurrentQuery[msg.sender] = qId;
