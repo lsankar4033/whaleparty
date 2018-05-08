@@ -173,7 +173,7 @@ contract Dice is usingOraclize, Ownable {
     GameData memory game = _queryToGameData[qId];
 
     uint256 odds = game.odds;
-    if (roll > odds) {
+    if (roll >= odds) {
       return 0;
     } else {
       uint256 wager = game.trueWager;
@@ -181,8 +181,9 @@ contract Dice is usingOraclize, Ownable {
 
       // payout = wager + winnings
       // winnings = (100 - x) / x
-      uint256 invOdds = MAX_ROLL.sub(odds);
-      uint256 winnings = invOdds.div(odds);
+      uint256 probabilityOdds = odds.sub(1)
+      uint256 invOdds = MAX_ROLL.sub(probabilityOdds);
+      uint256 winnings = invOdds.div(probabilityOdds);
       uint256 defaultWinnings = wager.add(winnings);
 
       uint256 availableBalance = _getAvailableBalance() ;
