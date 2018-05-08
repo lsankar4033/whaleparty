@@ -179,11 +179,12 @@ contract Dice is usingOraclize, Ownable {
       uint256 wager = game.trueWager;
       uint256 maxProfit = game.maxProfit;
 
-      // payout = wager + winnings
+      // payout = wager + winningsMultiple * wager
       // winnings = (100 - x) / x
-      uint256 probabilityOdds = odds.sub(1)
+      uint256 probabilityOdds = odds.sub(1);
       uint256 invOdds = MAX_ROLL.sub(probabilityOdds);
-      uint256 winnings = invOdds.div(probabilityOdds);
+      uint256 winningsMultiple = invOdds.div(probabilityOdds);
+      uint256 winnings = winningsMultiple.mul(wager);
       uint256 defaultWinnings = wager.add(winnings);
 
       uint256 availableBalance = _getAvailableBalance() ;
