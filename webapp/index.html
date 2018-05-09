@@ -106,7 +106,6 @@
         margin-left: auto;
         margin-right: auto;
         width: 100%;
-        display: none;
         image-orientation: center;
         }
 
@@ -251,9 +250,6 @@
       #second-roll-under{
         display: none;
       }
-      .fade2{
-        display: none;
-      }
       .rainbow-border{
         width: 100%;
         height: 10px;
@@ -306,65 +302,70 @@
 
 
       <div class = "wrap">
-        <div class = "place-bet">
-          <h2> Place your bet </h2>
-          <div class = "bet-size">
-            <label> Bet Size </label>
-            <input class="numb" id="betamount" type="number" min=".1" max="2" step=".1" value="0.1">
+        <div id="roll-prompt" style="display: none;">
+          <div class = "place-bet">
+            <h2> Place your bet </h2>
+            <div class = "bet-size">
+              <label> Bet Size </label>
+              <input class="numb" id="betamount" type="number" min=".1" max="2" step=".1" value="0.1">
 
-            <div class = "control">
-              <button class="auto-button" type="button" onclick="betamount.value= 0.1" id="min">MIN </button>
-              <button class="auto-button" type="button" onclick="betamount.value= 0.5" id="point5" >0.5 </button>
-              <button class="auto-button" type="button" onclick="betamount.value= 1"  id ="1" >1 </button>
-              <button class="auto-button" type="button" onclick="betamount.value= 2" id ="max" >MAX </button>
+              <div class = "control">
+                <button class="auto-button" type="button" onclick="betamount.value= 0.1" id="min">MIN </button>
+                <button class="auto-button" type="button" onclick="betamount.value= 0.5" id="point5" >0.5 </button>
+                <button class="auto-button" type="button" onclick="betamount.value= 1"  id ="1" >1 </button>
+                <button class="auto-button" type="button" onclick="betamount.value= 2" id ="max" >MAX </button>
+              </div>
+            </div>
+
+            <div class = "bet-value">
+
+              <label> Chance of Winning  </label>
+              <p><output id="chanceofwinning" for="rangeInput"> 50 </output>%</p><!-- Just to display selected value -->
+
+              <div class="control">
+                <sup>0%</sup><input type="range" min="1" max="98" value="50" step="1" list="tickmarks" class="slider" id="rangeInput" ><sup>100%</sup>
+                <!-- <datalist id="tickmarks">
+                  <option value="0 to 20">0</option>
+                  <option>20</option>
+                  <option>40</option>
+                  <option>60</option>
+                  <option>80</option>
+                  <option>100</option>second-roll-under
+                  </datalist> -->
+              </div>
+            </div>
+            <div class  ="actionbutton">
+              <button class="action" id="roll-btn">Roll</button>
             </div>
           </div>
 
-          <div class = "bet-value">
-
-            <label> Chance of Winning  </label>
-            <p><output id="chanceofwinning" for="rangeInput"> 50 </output>%</p><!-- Just to display selected value -->
-
-            <div class="control">
-              <sup>0%</sup><input type="range" min="1" max="98" value="50" step="1" list="tickmarks" class="slider" id="rangeInput" ><sup>100%</sup>
-              <!-- <datalist id="tickmarks">
-                <option value="0 to 20">0</option>
-                <option>20</option>
-                <option>40</option>
-                <option>60</option>
-                <option>80</option>
-                <option>100</option>second-roll-under
-              </datalist> -->
-            </div>
-          </div>
-          <div class  ="actionbutton">
-            <button class="action" id="test-roller" onclick="store_bet_value()">Roll</button>
-
+          <div class="Analysis">
+            <h2 > Roll Under <output  id="x">&nbsp;51</output> </h2>
+            <label class="whitelabel" color="white"> Wager: </label> <label id="wager" class="wager">0.1 </label> <label  class="eth"> ETH </label> <br>
+            <label class="whitelabel"> Potential Winning: </label> <label class="winningpot">0.09800000 </label> <label class="eth"> ETH </label> <br>
+            <label class="whitelabel"> Commission: </label> 1%
           </div>
         </div>
 
-        <div class="Analysis">
-          <h2 > Roll Under <output  id="x">&nbsp;51</output> </h2>
-          <label class="whitelabel" color="white"> Wager: </label> <label class="wager">0.1 </label> <label  class="eth"> ETH </label> <br>
-          <label class="whitelabel"> Potential Winning: </label> <label  class="winningpot">0.09800000 </label> <label class="eth"> ETH </label> <br>
-          <label class="whitelabel"> Commission: </label> 1%
+        <div id="roll-ongoing">
+          <div class="mysterybox">
+            <img id="loading" src="../img/whalesloading.gif" alt="loading">
+          </div>
+
+          <div class="actionbutton" id="roll-ongoing-content" style="display: none;">
+            <button class="action" id="cancel-btn">Cancel Roll</button>
+          </div>
         </div>
 
-
-
-        <div class = "mysterybox"  >
-          <h2 id="second-roll-under"> Roll Under: <output  color:"black" id="x2"></output> </h2>
-          <img id="loading" src="../img/whalesloading.gif" alt="loading">
-
+        <div id="roll-finished" style="display: none;">
+          <div class="mysterybox">
           <div class="fade2" >
-
             <div class="rainbow-border">  </div>
             <label class = "fade2" style="text-align:center;" > You Rolled </label><br>
             <label class="fade2" id ="winningnumber" style="text-align:center;" >  </label> <br><br>
           </div>
 
-          <div class= "result" id="win">
-
+          <div class= "result" id="win" style="display: none;">
             <img class="winner" src="../img/sunhappy.png">
             <img  class="winner" src="../img/whale2.png">
             <img  class="winner" src="../img/conf2.png">
@@ -374,10 +375,8 @@
             <img  class="winner" src="../img/conf3.png">
             <img  class="winner" src="../img/whale1.png">
             <img  class="winner" src="../img/sunhappy.png">
-
-
           </div>
-          <div class= "result" id="lose">
+          <div class= "result" id="lose" style="display: none;">
             <img  class="loser cloud"  src="../img/cloud2.png">
             <img class="loser cloud" src="../img/cloud2.png">
             <img class="loser" id="sad" src="../img/sad1.png">
@@ -386,16 +385,12 @@
             <img class="loser cloud" src="../img/cloud2.png">
           </div>
           <br>
-          <button class="fade2" id="roll-again">Roll Again</button>
 
-
+          <!-- TODO: Decide if we want a 'roll again button' -->
+          <!-- <button class="fade2" id="roll-again">Roll Again</button> -->
+          </div>
         </div>
-
       </div>
-
-
-
-
 
     <footer>
       <font size = "1" > max(dope) images by <a href="https://pngtree.com" >pngtree.com</a></font>
@@ -421,9 +416,6 @@
     <script src="js/truffle-contract.min.js"></script>
 
     <script src="js/app.js"></script>
-
-
-
 
   </body>
 </html>

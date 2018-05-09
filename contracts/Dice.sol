@@ -42,17 +42,22 @@ contract Dice is usingOraclize, Ownable {
   // For display purposes only
   uint256 public completedGames = 0;
 
-  event GameCompleted(
+  event RollCompleted(
     address indexed player,
-    bytes32 indexed qId,
-    uint256 roll
+    uint256 trueWager,
+    uint256 odds,
+    uint256 roll,
+    uint256 totalPayout
   );
 
-  event GameSubmitted(
+  event RollSubmitted(
     address indexed player,
-    bytes32 indexed qId,
     uint256 odds,
     uint256 trueWager
+  );
+
+  event RollCancelled(
+    address indexed player
   );
 
   event PlayerPaidOut(
@@ -89,6 +94,9 @@ contract Dice is usingOraclize, Ownable {
   }
 
   function rollDice(uint256 odds) external payable {
+    // Can't roll more than once at a time!
+    require(!hasActiveRoll());
+
     uint256 queryPrice = oraclize_getPrice("URL");
 
     // player's wager
@@ -105,7 +113,7 @@ contract Dice is usingOraclize, Ownable {
 
     lastQuery = queryStr;
 
-    emit GameSubmitted(msg.sender, qId, odds, trueWager);
+    emit RollSubmitted(msg.sender, odds, trueWager);
 
     _queryToGameData[qId] = GameData(
       msg.sender,
@@ -135,8 +143,10 @@ contract Dice is usingOraclize, Ownable {
     // Must be called by oraclize
     require(msg.sender == oraclize_cbAddress());
 
+    GameData memory game = _queryToGameData[qId];
+
     // Game must not have been cancelled or completed
-    require(_queryToGameData[qId].active);
+    require(game.active);
 
     // TODO: Check authenticity proof
 
@@ -146,9 +156,8 @@ contract Dice is usingOraclize, Ownable {
     // Payout player
     uint256 roll = _resultToRoll(result);
     uint256 payout = _calculatePayout(qId, roll);
-    address player = _queryToGameData[qId].player;
+    address player = game.player;
     if (payout > 0) {
-      // TODO: emit an event!
       player.transfer(payout);
       emit PlayerPaidOut(player, payout);
     }
@@ -157,8 +166,8 @@ contract Dice is usingOraclize, Ownable {
     lastPayout = payout;
 
     // TODO: Delete game in the future to save space
-    _queryToGameData[qId].roll = roll;
-    _queryToGameData[qId].active = false;
+    game.roll = roll;
+    game.active = false;
     _playerToCurrentQuery[player] = DEFAULT_BYTES32;
 
     // TODO: Remove
@@ -166,7 +175,7 @@ contract Dice is usingOraclize, Ownable {
 
     // game completed!
     completedGames = completedGames.add(1);
-    emit GameCompleted(_queryToGameData[qId].player, qId, roll);
+    emit RollCompleted(player, game.trueWager, game.odds, roll, payout);
   }
 
   function _calculatePayout(bytes32 qId, uint256 roll) internal view returns(uint256) {
@@ -189,7 +198,6 @@ contract Dice is usingOraclize, Ownable {
 
       uint256 availableBalance = _getAvailableBalance() ;
       if (defaultWinnings > availableBalance) {
-        // NOTE: Probably should be less than all of the available balance!
         return availableBalance;
       }
 
@@ -203,15 +211,16 @@ contract Dice is usingOraclize, Ownable {
     }
   }
 
+  // NOTE: Set to less than total balance so contract balance can't ever be drained
   function _getAvailableBalance() internal returns(uint256) {
-    return address(this).balance;
+    return address(this).balance / 2;
   }
 
   function _resultToRoll(string result) internal returns(uint256) {
     return parseInt(result);
   }
 
-  function hasActiveRoll() external view returns(bool) {
+  function hasActiveRoll() public view returns(bool) {
     return _playerToCurrentQuery[msg.sender] != DEFAULT_BYTES32;
   }
 
@@ -222,7 +231,8 @@ contract Dice is usingOraclize, Ownable {
     require(qId != DEFAULT_BYTES32);
 
     // Sanity check that game has same player associated with it
-    require(_queryToGameData[qId].player == msg.sender);
+    address player = _queryToGameData[qId].player;
+    require(player == msg.sender);
 
     // cancel role
     _queryToGameData[qId].active = false;
@@ -232,10 +242,11 @@ contract Dice is usingOraclize, Ownable {
     uint256 availableBalance = _getAvailableBalance();
 
     if (refund > availableBalance) {
-      // NOTE: Probably should be less than all of the available balance!
-      _queryToGameData[qId].player.transfer(availableBalance);
+      player.transfer(availableBalance);
     } else {
-      _queryToGameData[qId].player.transfer(refund);
+      player.transfer(refund);
     }
+
+    emit RollCancelled(player);
   }
 }
