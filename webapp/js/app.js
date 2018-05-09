@@ -128,12 +128,8 @@ App = {
 
   // Handler for RollCompleted event from smart contract
   completedHandler: (err, result) => {
-    console.log(`Received completed event! err: ${err} result: ${result}`);
-
     if (!err) {
       let playerAddr = result.args.player;
-
-      console.log(`Completed player: ${playerAddr}`);
 
       if (web3.eth.accounts[0] == playerAddr) {
         // TODO: Perhaps also display wager, odds, payout, etc.
@@ -142,8 +138,6 @@ App = {
         let roll = result.args.roll;
         let totalPayout = result.args.totalPayout;
         let profit = totalPayout - wager;
-
-        console.log(`${wager} ${odds} ${roll} ${totalPayout}`);
 
         $('#winningnumber').text(roll);
 
