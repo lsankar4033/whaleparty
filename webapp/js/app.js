@@ -14,6 +14,11 @@ function gasLimit(gasEstimate) {
   return 2 * gasEstimate;
 }
 
+// NOTE: The necessity for this map is extremely unfortunate :/. It needs to be updated on every deploy
+const networkToBlockNum = {
+  4: 2255074
+}
+
 App = {
   web3Provider: null,
   diceContract: null,
@@ -22,13 +27,13 @@ App = {
 
   init: async () => {
     await App.initContracts();
-    await App.initPage();
-
-    App.setupEventListeners();
-
-    App.setupRollUI();
+    await App.setupEventListeners();
+    await App.setupRollUI();
 
     $("#roll-btn").click(App.roll);
+
+    // Make this last so we wait until the end to make page elements visible
+    await App.initPage();
   },
 
   setupEventListeners: () => {
@@ -42,7 +47,15 @@ App = {
     );
 
     // All rolls
-    // TODO
+    let contractBlockNum = networkToBlockNum[web3.version.network];
+
+    if (typeof contractBlockNum != 'undefined') {
+      App.diceContract.RollCompleted(
+        {player: currentPlayer},
+        {fromBlock: contractBlockNum, toBlock: 'latest'},
+        App.allRollCompletedHandler
+      );
+    }
   },
 
   initContracts: async () => {
@@ -114,37 +127,15 @@ App = {
     }
   },
 
-  // TODO: Remove!
-  // Handler for RollCompleted event from smart contract
-  completedHandler: (err, result) => {
+  allRollCompletedHandler: (err, result) => {
     if (!err) {
-      let playerAddr = result.args.player;
+      let {playerAddr, wager, odds, roll, totalPayout} = result.args;
 
-      if (web3.eth.accounts[0] == playerAddr) {
-        // TODO: Perhaps also display wager, odds, payout, etc.
-        let wager = result.args.trueWager;
-        let odds = result.args.odds;
-        let roll = result.args.roll;
-        let totalPayout = result.args.totalPayout;
-        let profit = totalPayout - wager;
+      console.log(`Logged completed event! wager: ${wager}, odds: ${odds}, roll: ${roll}, payout: ${totalPayout}`);
+      // TODO: Populate results table
 
-        $('#winningnumber').text(roll);
-
-        // Change visual elements based on win or loss
-        if (totalPayout > 0) {
-          $("#winningnumber").css("color","green");
-          $('#win').show();
-        } else {
-          $("#winningnumber").css("color","red");
-          $('#lose').show();
-        }
-
-        $('#roll-prompt').hide();
-        $('#roll-ongoing').hide();
-        $('#roll-finished').show();
-      } else {
-        console.log(`Error waiting on cancel event: ${err}`);
-      }
+    } else {
+      console.log(`Faulty completed event! err: ${err}`);
     }
   },
 
