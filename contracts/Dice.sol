@@ -24,20 +24,10 @@ contract Dice is usingOraclize, Ownable {
     uint256 trueWager;
     uint256 roll; // only populated when game is complete
     uint256 maxProfit; // max profit calculated at roll time
-    bool active;
   }
 
-  // TODO: Un-public these things after I'm done debugging
+  // TODO: Un-public this after I'm done debugging
   mapping(bytes32 => GameData) public _queryToGameData;
-  mapping(address => bytes32) public _playerToCurrentQuery;
-
-  // TODO: Remove! or make private
-  mapping(address => uint256) public _playerToPayouts;
-
-  // TODO: Remove!
-  string public lastQuery;
-  string public lastResult;
-  uint256 public lastPayout;
 
   // For display purposes only
   uint256 public completedGames = 0;
@@ -54,10 +44,6 @@ contract Dice is usingOraclize, Ownable {
     address indexed player,
     uint256 odds,
     uint256 trueWager
-  );
-
-  event RollCancelled(
-    address indexed player
   );
 
   event PlayerPaidOut(
@@ -94,24 +80,19 @@ contract Dice is usingOraclize, Ownable {
   }
 
   function rollDice(uint256 odds) external payable {
-    // Can't roll more than once at a time!
-    require(!hasActiveRoll());
-
     uint256 queryPrice = oraclize_getPrice("URL");
 
     // player's wager
     require(msg.value > queryPrice);
-    uint256 wagerAfterQuery = msg.value - queryPrice;
+    uint256 wagerAfterQuery = msg.value.sub(queryPrice);
     uint256 fee = _computeRollFee(wagerAfterQuery);
-    uint256 trueWager = wagerAfterQuery - fee;
+    uint256 trueWager = wagerAfterQuery.sub(fee);
 
     // NOTE: Can probably simplify this to something static
     string memory queryStr = _getQueryStr(MIN_ROLL, MAX_ROLL);
 
     // TODO: When we need to encrypt random.org encryption key, this will need to become a 'nested' query
     bytes32 qId = oraclize_query("URL", queryStr, ORACLIZE_GAS_COST);
-
-    lastQuery = queryStr;
 
     emit RollSubmitted(msg.sender, odds, trueWager);
 
@@ -120,10 +101,8 @@ contract Dice is usingOraclize, Ownable {
       odds,
       trueWager,
       INVALID_ROLL,
-      getMaxProfit(),
-      true
+      getMaxProfit()
     );
-    _playerToCurrentQuery[msg.sender] = qId;
   }
 
   // NOTE: 1%, can be modified!
@@ -145,13 +124,10 @@ contract Dice is usingOraclize, Ownable {
 
     GameData memory game = _queryToGameData[qId];
 
-    // Game must not have been cancelled or completed
-    require(game.active);
+    // Game must not already have a roll associated with it
+    require(game.roll == INVALID_ROLL);
 
     // TODO: Check authenticity proof
-
-    // TODO: Remove
-    lastResult = result;
 
     // Payout player
     uint256 roll = _resultToRoll(result);
@@ -162,16 +138,8 @@ contract Dice is usingOraclize, Ownable {
       emit PlayerPaidOut(player, payout);
     }
 
-    // TODO: Remove
-    lastPayout = payout;
-
     // TODO: Delete game in the future to save space
     game.roll = roll;
-    game.active = false;
-    _playerToCurrentQuery[player] = DEFAULT_BYTES32;
-
-    // TODO: Remove
-    _playerToPayouts[player] += payout;
 
     // game completed!
     completedGames = completedGames.add(1);
@@ -218,35 +186,5 @@ contract Dice is usingOraclize, Ownable {
 
   function _resultToRoll(string result) internal returns(uint256) {
     return parseInt(result);
-  }
-
-  function hasActiveRoll() public view returns(bool) {
-    return _playerToCurrentQuery[msg.sender] != DEFAULT_BYTES32;
-  }
-
-  function cancelActiveRoll() external {
-    bytes32 qId = _playerToCurrentQuery[msg.sender];
-
-    // Must have an active roll
-    require(qId != DEFAULT_BYTES32);
-
-    // Sanity check that game has same player associated with it
-    address player = _queryToGameData[qId].player;
-    require(player == msg.sender);
-
-    // cancel role
-    _queryToGameData[qId].active = false;
-    _playerToCurrentQuery[msg.sender] = DEFAULT_BYTES32;
-
-    uint256 refund = _queryToGameData[qId].trueWager;
-    uint256 availableBalance = _getAvailableBalance();
-
-    if (refund > availableBalance) {
-      player.transfer(availableBalance);
-    } else {
-      player.transfer(refund);
-    }
-
-    emit RollCancelled(player);
   }
 }

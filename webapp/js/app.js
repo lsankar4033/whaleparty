@@ -7,7 +7,7 @@ function weiToEth(wei) {
 }
 
 // TODO: Determine this based on network?
-const defaultGasPrice = 2000000000;
+const defaultGasPrice = 5000000000;
 
 // NOTE: This function determines gas limit for a certain gas estimate
 function gasLimit(gasEstimate) {
@@ -29,26 +29,13 @@ App = {
     App.setupRollUI();
 
     $("#roll-btn").click(App.roll);
-
-    $("#cancel-btn").click(App.cancelRoll);
-
-    $('#roll-again').click(function(){
-      $(".place-bet").fadeIn();
-      $(".Analysis").fadeIn();
-      $("#second-roll-under").fadeOut();
-      $(".fade2").fadeOut();
-      $(".result").fadeOut();
-    });
   },
 
-  // TODO: Listener for payouts!
   setupEventListeners: () => {
     let currentPlayer = web3.eth.accounts[0];
 
+    // TODO: This should fill in the results table and last block
     let completed = App.diceContract.RollCompleted({player: currentPlayer}, {toBlock: 'latest'});
-    let cancelled = App.diceContract.RollCancelled({player: currentPlayer}, {toBlock: 'latest'});
-
-    cancelled.watch(App.cancelledHandler);
     completed.watch(App.completedHandler);
   },
 
@@ -67,20 +54,11 @@ App = {
     }
   },
 
-  // TODO: Display num completed games?
   initPage: async () => {
     App.maxProfitWei = await App.diceContract.getMaxProfit();
-    let hasActiveRoll = await App.diceContract.hasActiveRoll();
 
-    if (!hasActiveRoll) {
-      // Display roll prompt
-      $('#roll-ongoing').fadeOut( () => {
-        $('#roll-ongoing').hide();
-        $('#roll-prompt').show();
-      });
-    } else {
-      $('#roll-ongoing-content').show();
-    }
+    $('#roll-ongoing').hide();
+    $('#roll-prompt').show();
   },
 
   roll: async (min, max) => {
@@ -101,29 +79,6 @@ App = {
     $('#roll-ongoing').show();
     $('#roll-ongoing-content').show();
     $('#loading').fadeIn();
-  },
-
-  cancelRoll: async () => {
-    await App.diceContract.cancelActiveRoll();
-
-    // TODO: Add modal with tx info
-  },
-
-  // Handler for RollCancelled event from smart contract
-  cancelledHandler: (err, result) => {
-    if (!err) {
-      let playerAddr = result.args.player;
-
-      console.log(`Cancelled player: ${playerAddr}`);
-
-      // If it's for *this* player, change to roll-prompt screen
-      if (web3.eth.accounts[0] == playerAddr) {
-        $('#roll-ongoing').hide();
-        $('#roll-prompt').show();
-      }
-    } else {
-      console.log(`Error waiting on cancel event: ${err}`);
-    }
   },
 
   // Handler for RollCompleted event from smart contract
@@ -202,7 +157,5 @@ App = {
 };
 
 $(function() {
-  $(window).load( () => {
-    App.init();
-  });
+  App.init();
 });
