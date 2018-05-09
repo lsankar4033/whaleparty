@@ -213,7 +213,7 @@ contract Dice is usingOraclize, Ownable {
 
   // NOTE: Set to less than total balance so contract balance can't ever be drained
   function _getAvailableBalance() internal returns(uint256) {
-    return address(this).balance / 2;
+    return address(this).balance;
   }
 
   function _resultToRoll(string result) internal returns(uint256) {
