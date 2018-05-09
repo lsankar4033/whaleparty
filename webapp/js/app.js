@@ -34,9 +34,15 @@ App = {
   setupEventListeners: () => {
     let currentPlayer = web3.eth.accounts[0];
 
-    // TODO: This should fill in the results table and last block
-    let completed = App.diceContract.RollCompleted({player: currentPlayer}, {toBlock: 'latest'});
-    completed.watch(App.completedHandler);
+    // Rolls completed since this listener was set up
+    App.diceContract.RollCompleted(
+      {player: currentPlayer},
+      {toBlock: 'latest'},
+      App.newRollCompletedHandler
+    );
+
+    // All rolls
+    // TODO
   },
 
   initContracts: async () => {
@@ -57,8 +63,7 @@ App = {
   initPage: async () => {
     App.maxProfitWei = await App.diceContract.getMaxProfit();
 
-    $('#roll-ongoing').hide();
-    $('#roll-prompt').show();
+    $('#roll-ongoing').fadeOut(() => $('#roll-prompt').show());
   },
 
   roll: async (min, max) => {
@@ -67,20 +72,46 @@ App = {
     let wager = ethToWei(parseFloat($('#wager').text()));
 
     let gasEstimate = await App.diceContract.rollDice.estimateGas(odds, {value: wager});
-    App.diceContract.rollDice(odds,
+    let txId = await App.diceContract.rollDice.sendTransaction(
+      odds,
       {
         gas: gasLimit(gasEstimate),
         gasPrice: defaultGasPrice,
         value: wager
-      });
+      }
+    );
+
+    console.log(`Roll submitted! odds: ${odds}, wager: ${wager} txId: ${txId}`);
 
     // Display roll ongoing
     $('#roll-prompt').hide();
-    $('#roll-ongoing').show();
-    $('#roll-ongoing-content').show();
-    $('#loading').fadeIn();
+    $('#roll-ongoing').fadeIn();
+
+    // TODO: Display roll info under whales
   },
 
+  newRollCompletedHandler: (err, result) => {
+    if (!err) {
+      let playerAddr = result.args.player;
+      let wager = result.args.trueWager;
+      let odds = result.args.odds;
+      let roll = result.args.roll;
+      let totalPayout = result.args.totalPayout;
+      let profit = Math.max(0, totalPayout - wager);
+
+      console.log(`Received new completed event! wager: ${wager}, odds: ${odds}, roll: ${roll}, payout: ${totalPayout}`);
+
+      // TODO: Populate latest roll element
+
+      if ($('#roll-ongoing').is(':visible')) {
+        $('#roll-ongoing').fadeOut(() => $('#roll-prompt').show());
+      }
+    } else {
+      console.log(`Faulty completed event! err: ${err}`);
+    }
+  },
+
+  // TODO: Remove!
   // Handler for RollCompleted event from smart contract
   completedHandler: (err, result) => {
     if (!err) {
