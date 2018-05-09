@@ -69,25 +69,28 @@ App = {
   roll: async (min, max) => {
     // Submit roll to contract
     let odds = parseInt($('#x').val());
-    let wager = ethToWei(parseFloat($('#wager').text()));
+    let wagerWei = ethToWei(parseFloat($('#wager').text()));
 
-    let gasEstimate = await App.diceContract.rollDice.estimateGas(odds, {value: wager});
+    let gasEstimate = await App.diceContract.rollDice.estimateGas(odds, {value: wagerWei});
     let txId = await App.diceContract.rollDice.sendTransaction(
       odds,
       {
         gas: gasLimit(gasEstimate),
         gasPrice: defaultGasPrice,
-        value: wager
+        value: wagerWei
       }
     );
 
-    console.log(`Roll submitted! odds: ${odds}, wager: ${wager} txId: ${txId}`);
+    console.log(`Roll submitted! odds: ${odds}, wager: ${wagerWei} txId: ${txId}`);
+
+    // Populate roll info
+    $('#pending-roll-info').show();
+    $('#pending-roll-info .wager').text(weiToEth(wagerWei));
+    $('#pending-roll-info .odds').text(odds);
 
     // Display roll ongoing
     $('#roll-prompt').hide();
     $('#roll-ongoing').fadeIn();
-
-    // TODO: Display roll info under whales
   },
 
   newRollCompletedHandler: (err, result) => {
