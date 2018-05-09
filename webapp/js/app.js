@@ -74,8 +74,10 @@ App = {
 
     if (!hasActiveRoll) {
       // Display roll prompt
-      $('#roll-ongoing').fadeOut( () => $('#roll-ongoing').hide() );
-      $('#roll-prompt').show();
+      $('#roll-ongoing').fadeOut( () => {
+        $('#roll-ongoing').hide();
+        $('#roll-prompt').show();
+      });
     } else {
       $('#roll-ongoing-content').show();
     }
