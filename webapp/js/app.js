@@ -108,14 +108,9 @@ App = {
 
   newRollCompletedHandler: (err, result) => {
     if (!err) {
-      let playerAddr = result.args.player;
-      let wager = result.args.trueWager;
-      let odds = result.args.odds;
-      let roll = result.args.roll;
-      let totalPayout = result.args.totalPayout;
-      let profit = Math.max(0, totalPayout - wager);
+      let {player, trueWager, odds, roll, totalPayout} = result.args;
 
-      console.log(`Received new completed event! wager: ${wager}, odds: ${odds}, roll: ${roll}, payout: ${totalPayout}`);
+      console.log(`Received new completed event! wager: ${trueWager}, odds: ${odds}, roll: ${roll}, payout: ${totalPayout}`);
 
       // TODO: Populate latest roll element
 
@@ -129,9 +124,9 @@ App = {
 
   allRollCompletedHandler: (err, result) => {
     if (!err) {
-      let {playerAddr, wager, odds, roll, totalPayout} = result.args;
+      let {player, trueWager, odds, roll, totalPayout} = result.args;
 
-      console.log(`Logged completed event! wager: ${wager}, odds: ${odds}, roll: ${roll}, payout: ${totalPayout}`);
+      console.log(`Logged completed event! wager: ${trueWager}, odds: ${odds}, roll: ${roll}, payout: ${totalPayout}`);
       // TODO: Populate results table
       var table = document.getElementById("myTable");
       var row = table.insertRow(1);
@@ -140,8 +135,8 @@ App = {
       var cell3 = row.insertCell(2);
       var cell4 = row.insertCell(3);
       var cell5 = row.insertCell(4);
-      cell1.innerHTML = playerAddr;
-      cell2.innerHTML = wager;
+      cell1.innerHTML = player;
+      cell2.innerHTML = trueWager;
       cell3.innerHTML = odds;
       cell4.innerHTML = roll;
       cell5.innerHTML = totalPayout;
