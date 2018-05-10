@@ -127,8 +127,6 @@ contract Dice is usingOraclize, Ownable {
     // Game must not already have a roll associated with it
     require(game.roll == INVALID_ROLL);
 
-    // TODO: Check authenticity proof
-
     // Payout player
     uint256 roll = _resultToRoll(result);
     uint256 payout = _calculatePayout(qId, roll);
