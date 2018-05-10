@@ -133,6 +133,18 @@ App = {
 
       console.log(`Logged completed event! wager: ${wager}, odds: ${odds}, roll: ${roll}, payout: ${totalPayout}`);
       // TODO: Populate results table
+      var table = document.getElementById("myTable");
+      var row = table.insertRow(1);
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+      var cell4 = row.insertCell(3);
+      var cell5 = row.insertCell(4);
+      cell1.innerHTML = playerAddr;
+      cell2.innerHTML = wager;
+      cell3.innerHTML = odds;
+      cell4.innerHTML = roll;
+      cell5.innerHTML = totalPayout;
 
     } else {
       console.log(`Faulty completed event! err: ${err}`);

@@ -18,6 +18,24 @@ header{
   text-align: center;
 }
 
+.result{
+  text-align: left;
+  margin-left: 3%;
+}
+
+table {
+  border-collapse: collapse;
+  margin-top: -20px;
+  font-size: 15px;
+  font-style: normal;
+
+ }
+tr:nth-child(1) {
+  border-bottom: solid thin white;
+  color: blue;
+  font-weight: lighter;
+}
+
 .auto-button{
   width: 3.5em;
   height: 2.75em;
@@ -62,6 +80,17 @@ header{
 
 .wrap{
   width: 100%;
+}
+
+#head_right{
+  float:right;
+  color:black;
+  margin-right: 10%;
+}
+
+#head_left{
+  float:left;
+  margin=left: 10%;
 }
 
 .place-bet{
