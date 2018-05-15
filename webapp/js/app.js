@@ -122,6 +122,8 @@ App = {
     }
   },
 
+
+
   allRollCompletedHandler: (err, result) => {
     if (!err) {
       let {player, trueWager, odds, roll, totalPayout} = result.args;
@@ -134,16 +136,24 @@ App = {
       var cell2 = row.insertCell(1);
       var cell3 = row.insertCell(2);
       var cell4 = row.insertCell(3);
-      var cell5 = row.insertCell(4);
-      cell1.innerHTML = player;
-      cell2.innerHTML = trueWager;
-      cell3.innerHTML = odds;
-      cell4.innerHTML = roll;
-      cell5.innerHTML = totalPayout;
+      cell1.innerHTML = weiToEth(trueWager).toFixed(4);
+      cell2.innerHTML = odds.toFixed(0);
+      cell3.innerHTML = roll.toFixed(0);
+      cell4.innerHTML = weiToEth(totalPayout).toFixed(4);
 
     } else {
       console.log(`Faulty completed event! err: ${err}`);
-    }
+    };
+    $(function(){
+    $('tr').each(function(){
+      var col_val = +($(this).find("td:eq(3)").text());
+      if (col_val > 0){
+        $(this).addClass('won');  //the selected class colors the row green//
+      } else {
+        $(this).addClass('lost');
+      }
+    });
+  });
   },
 
   // Sets up roll UI for selecting odds + bet size

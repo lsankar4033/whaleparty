@@ -15,15 +15,24 @@
   <body>
     <header>
       <div id="head_left">
-        <h3 class=result id="resultitle">Results</h3>
-        <table id="myTable" class=result>
-          <tr id="headrow" >
-            <th scope="col">Address&nbsp;&nbsp;&nbsp;</th>
-            <th scope="col">Wager&nbsp;&nbsp;&nbsp;</th>
-            <th scope="col">Odds&nbsp;&nbsp;&nbsp;</th>
-            <th scope="col">Roll&nbsp;&nbsp;&nbsp;</th>
-            <th scope="col">Payout&nbsp;&nbsp;&nbsp;</th>
-          </tr>
+        <h3  id="resultitle">Results</h3>
+        <table id="myTable" >
+          <thead>
+            <tr>
+              <th id="th1" width="80px" scope="col">Wager</th>
+              <th id="th2" width="80px" scope="col">Odds</th>
+              <th id="th3" width="80px" scope="col">Roll</th>
+              <th id="th4" width="80px" scope="col">Payout</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td headers="th1" width="67px"></td>
+              <td headers="th2" width="110px"></td>
+              <td headers="th3" width="90px"></td>
+              <td headers="th4" width="80px"></td>
+            </tr>
+          </tbody>
         </table>
       </div>
       <div id="head_right">
@@ -32,7 +41,7 @@
 
       </div>
       <div id="frame">
-        <img src="../img/CrownFrame.png" height= "350px" width="350px">
+        <img id="crown" src="../img/CrownFrame.png" height= "350px" width="350px">
 
         <div class ="text-block">
           <h1 class = "keep"> Keep </h1>
