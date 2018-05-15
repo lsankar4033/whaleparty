@@ -167,7 +167,7 @@ App = {
       $('.wager').text($('#betamount').val());
 
       var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
-      var max_win_amt = weitoeth(app.maxprofitwei);
+      var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
       } else{
@@ -179,7 +179,7 @@ App = {
       $('.wager').text(0.1);
       $('#betamount').val(0.1);
       var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
-      var max_win_amt = weitoeth(app.maxprofitwei);
+      var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
       } else{
@@ -191,7 +191,7 @@ App = {
       $('.wager').text(0.5);
       $('#betamount').val(0.5);
       var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
-      var max_win_amt = weitoeth(app.maxprofitwei);
+      var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
       } else{
@@ -203,7 +203,7 @@ App = {
       $('.wager').text(1);
       $('#betamount').val(1);
       var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
-      var max_win_amt = weitoeth(app.maxprofitwei);
+      var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
       } else{
@@ -215,7 +215,7 @@ App = {
       $('.wager').text(2);
       $('#betamount').val(2);
       var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
-      var max_win_amt = weitoeth(app.maxprofitwei);
+      var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
       } else{
@@ -225,7 +225,7 @@ App = {
 
     $('#rangeInput').on('input', function() {
       var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
-      var max_win_amt = weitoeth(app.maxprofitwei);
+      var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
       } else{
