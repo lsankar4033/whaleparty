@@ -78,7 +78,7 @@ contract Dice is usingOraclize, Ownable {
 
   // NOTE: Currently 10% of contract balance. Can be tuned
   function getMaxProfit() public view returns(uint256) {
-    return address(this).balance / 10;
+    return address(this).balance / 20;
   }
 
   function rollDice(uint256 odds) external payable {
@@ -115,9 +115,6 @@ contract Dice is usingOraclize, Ownable {
 
   // NOTE: Doesn't use API key so that we don't have to do all the fancy encryption stuff.
   function _getQueryStr(uint256 min, uint256 max) internal returns(string) {
-    // TODO: encrypted query...
-    //string memory newStr = strConcat("[URL] ['json(https://api.random.org/json-rpc/1/invoke).result.random[\"serialNumber\",\"data\"]', '\\n{\"jsonrpc\":\"2.0\",\"method\":\"generateSignedIntegers\",\"params\":{\"apiKey\":${[decrypt] BKg3TCs7lkzNr1kR6pxjPCM2SOejcFojUPMTOsBkC/47HHPf1sP2oxVLTjNBu+slR9SgZyqDtjVOV5Yzg12iUkbubp0DpcjCEdeJTHnGwC6gD729GUVoGvo96huxwRoZlCjYO80rWq2WGYoR/LC3WampDuvv2Bo=},\"n\":1,\"min\":", uint2str(min), "\"max\"": uint2str(max), "\"replacement\":true,\"base\":10${[identity] \"}\"},\"id\":1${[identity] \"}\"}']")
-
     return strConcat("https://www.random.org/integers/?num=1&min=", uint2str(min), "&max=", uint2str(max), "&col=1&base=10&format=plain&rnd=new");
   }
 
