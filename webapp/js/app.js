@@ -64,7 +64,7 @@ App = {
     }
 
     else if (web3.version.network != 1 && web3.version.network != 4 && web3.version.network != 5777) {
-      alert("You must point Metamask to mainnet or rinkeby to use Whaleparty!");
+      alert("You must point Metamask to mainnet or rinkeby to use Whale Party!");
     }
 
     else {
