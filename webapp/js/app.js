@@ -61,7 +61,13 @@ App = {
   initContracts: async () => {
     if (typeof web3 == 'undefined') {
       alert("Couldn't find a web3 instance! Do you have metamask installed?");
-    } else {
+    }
+
+    else if (web3.version.network != 1 && web3.version.network != 4 && web3.version.network != 5777) {
+      alert("You must point Metamask to mainnet or rinkeby to use Whaleparty!");
+    }
+
+    else {
       App.web3Provider = web3.currentProvider;
 
       let contractData = await $.getJSON('contracts/Dice.json');
