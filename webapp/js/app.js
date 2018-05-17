@@ -76,6 +76,8 @@ App = {
   initPage: async () => {
     App.maxProfitWei = await App.diceContract.getMaxProfit();
 
+    $('.resultboxwin').hide();
+    $('.resultboxlose').hide();
 
     $('#roll-ongoing').fadeOut(() => $('#roll-prompt').show());
   },
