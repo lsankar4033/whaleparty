@@ -21,6 +21,7 @@ contract Dice is usingOraclize, Ownable {
   struct GameData {
     address player;
     uint256 odds; // represents the roll under which all winning rolls must lie
+    uint256 wager;
     uint256 trueWager;
     uint256 roll; // only populated when game is complete
     uint256 maxProfit; // max profit calculated at roll time
@@ -34,6 +35,7 @@ contract Dice is usingOraclize, Ownable {
 
   event RollCompleted(
     address indexed player,
+    uint256 wager,
     uint256 trueWager,
     uint256 odds,
     uint256 roll,
@@ -99,6 +101,7 @@ contract Dice is usingOraclize, Ownable {
     _queryToGameData[qId] = GameData(
       msg.sender,
       odds,
+      msg.value,
       trueWager,
       INVALID_ROLL,
       getMaxProfit()
@@ -141,7 +144,7 @@ contract Dice is usingOraclize, Ownable {
 
     // game completed!
     completedGames = completedGames.add(1);
-    emit RollCompleted(player, game.trueWager, game.odds, roll, payout);
+    emit RollCompleted(player, game.wager, game.trueWager, game.odds, roll, payout);
   }
 
   function _calculatePayout(bytes32 qId, uint256 roll) internal view returns(uint256) {

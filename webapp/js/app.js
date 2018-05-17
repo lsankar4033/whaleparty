@@ -123,24 +123,23 @@ App = {
     }
   },
 
-
-
   allRollCompletedHandler: (err, result) => {
     if (!err) {
-      let {player, trueWager, odds, roll, totalPayout} = result.args;
+      let {player, wager, trueWager, odds, roll, totalPayout} = result.args;
 
-      console.log(`Logged completed event! wager: ${trueWager}, odds: ${odds}, roll: ${roll}, payout: ${totalPayout}`);
-      // TODO: Populate results table
+      let profit = totalPayout - wager;
+      let formattedProfit = weiToEth(profit).toFixed(4);
+
       var table = document.getElementById("myTable");
       var row = table.insertRow(1);
       var cell1 = row.insertCell(0);
       var cell2 = row.insertCell(1);
       var cell3 = row.insertCell(2);
       var cell4 = row.insertCell(3);
-      cell1.innerHTML = weiToEth(trueWager).toFixed(4);
+      cell1.innerHTML = weiToEth(wager).toFixed(4);
       cell2.innerHTML = odds.toFixed(0);
       cell3.innerHTML = roll.toFixed(0);
-      cell4.innerHTML = weiToEth(totalPayout).toFixed(4);
+      cell4.innerHTML = formattedProfit < 0 ? formattedProfit : `+${formattedProfit}`;
 
     } else {
       console.log(`Faulty completed event! err: ${err}`);
