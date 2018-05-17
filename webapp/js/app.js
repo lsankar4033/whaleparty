@@ -111,12 +111,22 @@ App = {
     if (!err) {
       let {player, trueWager, odds, roll, totalPayout} = result.args;
 
-      console.log(`Received new completed event! wager: ${trueWager}, odds: ${odds}, roll: ${roll}, payout: ${totalPayout}`);
-
-      // TODO: Populate latest roll element
+      let profit = totalPayout - wager;
+      let formattedProfit = weiToEth(profit).toFixed(4);
 
       if ($('#roll-ongoing').is(':visible')) {
-        $('#roll-ongoing').fadeOut(() => $('#roll-prompt').show());
+        $('#roll-ongoing').fadeOut(() => {
+
+          if (formattedProfit > 0) {
+            $('.resultboxwin').show();
+            $('#win-roll').text(roll);
+          } else {
+            $('.resultboxlose').show();
+            $('#lose-roll').text(roll);
+          }
+
+          $('#roll-prompt').show();
+        });
       }
     } else {
       console.log(`Faulty completed event! err: ${err}`);
