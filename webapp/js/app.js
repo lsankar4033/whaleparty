@@ -76,6 +76,7 @@ App = {
   initPage: async () => {
     App.maxProfitWei = await App.diceContract.getMaxProfit();
 
+
     $('#roll-ongoing').fadeOut(() => $('#roll-prompt').show());
   },
 
@@ -170,6 +171,7 @@ App = {
       var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
+        $('#maxwinreached').show();
       } else{
         $('.winningpot').text((winning_amt).toFixed(8));
       }
@@ -182,8 +184,10 @@ App = {
       var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
+        $('#maxwinreached').show();
       } else{
         $('.winningpot').text((winning_amt).toFixed(8));
+        $('#maxwinreached').hide();
       }
     });
 
@@ -194,8 +198,10 @@ App = {
       var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
+        $('#maxwinreached').show();
       } else{
         $('.winningpot').text((winning_amt).toFixed(8));
+        $('#maxwinreached').hide();
       }
     });
 
@@ -206,8 +212,10 @@ App = {
       var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
+        $('#maxwinreached').show();
       } else{
         $('.winningpot').text((winning_amt).toFixed(8));
+        $('#maxwinreached').hide();
       }
     });
 
@@ -218,20 +226,63 @@ App = {
       var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
+        $('#maxwinreached').show();
       } else{
         $('.winningpot').text((winning_amt).toFixed(8));
+        $('#maxwinreached').hide();
       }
     });
 
     $('#rangeInput').on('input', function() {
+      // $('.winningpot').text((.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01).toFixed(8));
       var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
       var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
+        $('#maxwinreached').show();
       } else{
         $('.winningpot').text((winning_amt).toFixed(8));
+        $('#maxwinreached').hide();
       }
+
+
+       //
     });
+
+    // Get the modal
+        var modal = document.getElementById('myModal');
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("btnsuccess");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    // $('#rangeInput').on('input', function() {
+    //   var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
+    //   var max_win_amt = weiToEth(App.maxProfitWei);
+    //   if (max_win_amt < winning_amt){
+    //     $('.winningpot').text((max_win_amt).toFixed(8));
+    //   } else{
+    //     $('.winningpot').text((winning_amt).toFixed(8));
+    //   }
+    // });
   }
 };
 

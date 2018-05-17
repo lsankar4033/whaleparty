@@ -36,8 +36,23 @@
         </table>
       </div>
       <div id="head_right">
-        <p>Wallet</p>
-        <p>Balance</p>
+        <button id="btnsuccess"><h3>About</h3></button>
+
+            <!-- The Modal -->
+            <div id="myModal" class="modal">
+
+              <!-- Modal content -->
+              <div class="modal-content">
+                <span class="close">&times;</span>
+                <p> <font size="4" color="white"> How? </font></p>
+                <p>Lakshman dropping knowledge </p>
+                <p> <font size="4" color="white"> Whale Party Fam? </font></p>
+                <p>  </p>
+                <p> <font size="4" color="white"> Our Clever Contracts </font></p>
+                <p>Link  </p>
+              </div>
+
+            </div>
 
       </div>
       <div id="frame">
@@ -56,29 +71,26 @@
     </header>
 
 
-      <div class = "wrap">
-        <div id="roll-prompt" style="display: none;">
-          <div class = "place-bet">
-            <h2> Place your bet </h2>
-            <div class = "bet-size">
-              <label> Bet Size </label>
-              <input class="numb" id="betamount" type="number" min=".1" max="2" step=".1" value="0.1">
+    <div class = "wrap">
+      <div id="roll-prompt" style="display: none;">
+        <div class = "place-bet">
+          <h2> Place your bet </h2>
+          <div class = "bet-size">
+            <label> Bet Size </label>
+            <input class="numb" id="betamount" type="number" min=".1" max="2" step=".1" value="0.1">
 
-              <div class = "control">
-                <button class="auto-button" type="button" onclick="betamount.value= 0.1" id="min">MIN </button>
-                <button class="auto-button" type="button" onclick="betamount.value= 0.5" id="point5" >0.5 </button>
-                <button class="auto-button" type="button" onclick="betamount.value= 1"  id ="1" >1 </button>
-                <button class="auto-button" type="button" onclick="betamount.value= 2" id ="max" >MAX </button>
-              </div>
+            <div class = "control">
+              <button class="auto-button" type="button" onclick="betamount.value= 0.1" id="min">MIN </button>
+              <button class="auto-button" type="button" onclick="betamount.value= 0.5" id="point5" >0.5 </button>
+              <button class="auto-button" type="button" onclick="betamount.value= 1"  id ="1" >1 </button>
+              <button class="auto-button" type="button" onclick="betamount.value= 2" id ="max" >MAX </button>
             </div>
-
-            <div class = "bet-value">
-
-              <label> Chance of Winning  </label>
-              <p><output id="chanceofwinning" for="rangeInput"> 50 </output>%</p><!-- Just to display selected value -->
-
-              <div class="control">
-                <sup>0%</sup><input type="range" min="1" max="98" value="50" step="1" list="tickmarks" class="slider" id="rangeInput" ><sup>100%</sup>
+          </div>
+          <div class = "bet-value">
+            <label> Chance of Winning  </label>
+            <p><output id="chanceofwinning" for="rangeInput"> 50 </output>%</p><!-- Just to display selected value -->
+            <div class="control">
+              <sup>0%</sup><input type="range" min="1" max="98" value="50" step="1" list="tickmarks" class="slider" id="rangeInput" ><sup>100%</sup>
                 <!-- <datalist id="tickmarks">
                   <option value="0 to 20">0</option>
                   <option>20</option>
@@ -87,40 +99,53 @@
                   <option>80</option>
                   <option>100</option>second-roll-under
                   </datalist> -->
-              </div>
             </div>
-            <div class  ="actionbutton">
-              <button class="action" id="roll-btn">Roll</button>
-            </div>
-          </div>
-
-          <div class="Analysis">
-            <h2 > Roll Under <output  id="x">&nbsp;51</output> </h2>
-            <label class="whitelabel" color="white"> Wager: </label> <label id="wager" class="wager">0.1 </label> <label  class="eth"> ETH </label> <br>
-            <label class="whitelabel"> Potential Winning: </label> <label class="winningpot">0.09800000 </label> <label class="eth"> ETH </label> <br>
-            <label class="whitelabel"> Commission: </label> 1%
+            <button class="action" id="roll-btn">Roll</button>
           </div>
         </div>
 
-        <div id="roll-ongoing">
-          <div class="mysterybox">
-            <img id="loading" src="../img/whalesloading.gif" alt="loading">
+        <div class="Analysis">
+          <h2 > Roll Under <output  id="x">&nbsp;51</output> </h2>
+          <label class="whitelabel" color="white"> Wager: </label> <label id="wager" class="wager">0.1 </label> <label  class="eth"> ETH </label> <br>
+          <label class="whitelabel"> Potential Winning: </label> <label class="winningpot">0.09800000 </label> <label class="eth"> ETH  <font class="maxwin" id="maxwinreached" size="1" color="red"> (max profit reached)</font></label> <br>
+          <label class="whitelabel"> Commission: </label> 1%
+        </div>
+      </div>
 
-            <div id="pending-roll-info" style="display: none;">
-              You wagered <span class="wager whitelabel"></span> Eth to roll under <span class="odds whitelabel"></span>
-            </div>
+      <div id="roll-ongoing">
+        <div class="mysterybox">
+          <img id="loading" src="../img/whalesloading.gif" alt="loading">
+
+          <div id="pending-roll-info" style="display: none;">
+                          You wagered <span class="wager whitelabel"></span> Eth to roll under <span class="odds whitelabel"></span>
           </div>
         </div>
+      </div>
 
-        <div id="roll-finished" style="display: none;">
-          <div class="mysterybox">
-          <div class="fade2" >
-            <div class="rainbow-border">  </div>
-            <label class = "fade2" style="text-align:center;" > You Rolled </label><br>
-            <label class="fade2" id ="winningnumber" style="text-align:center;" >  </label> <br><br>
-          </div>
 
-          <div class= "result" id="win" style="display: none;">
+      <div class="resultboxwin" style="display: show;">
+        <img id="winner" src="../img/celebrate2.gif" alt="loading">
+        <img id="winner2" src="../img/pinkclouds.png" alt="loading">
+          <!-- <div class="rainbow-border">  </div> -->
+        <div class="resultboxtxtwin">
+          <h2 > You Rolled </h2>
+          <h3> <font color = "blue"> 500 </font> </h3>
+        </div>
+      </div>
+
+      <div class="resultboxlose" style="display: none;">
+        <div>
+          <img id="loser1" src="../img/raincloud.png" alt="loading">
+          <img id="loser2" src="../img/rain2.png" alt="loading">
+        </div>
+          <!-- <div class="rainbow-border">  </div> -->
+        <div class="resultboxtxtlose">
+          <h2 > You Rolled </h2>
+          <h3> <font color = "red"> 50 </font> </h3>
+        </div>
+      </div>
+
+        <!-- <div class= "result" id="win" style="display: none;">
             <img class="winner" src="../img/sunhappy.png">
             <img  class="winner" src="../img/whale2.png">
             <img  class="winner" src="../img/conf2.png">
@@ -138,11 +163,8 @@
             <img id="heart" class="loser" src="../img/heartbroken.png">
             <img class="loser cloud" src="../img/cloud2.png">
             <img class="loser cloud" src="../img/cloud2.png">
-          </div>
-          <br>
-          </div>
-        </div>
-      </div>
+          </div> -->
+    </div>
 
     <footer>
       <font size = "1" > dope images by <a href="https://pngtree.com" >pngtree.com</a></font>
@@ -168,6 +190,33 @@
     <script src="js/truffle-contract.min.js"></script>
 
     <script src="js/app.js"></script>
+    <!-- <script>
+            // Get the modal
+        var modal = document.getElementById('myModal');
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("myBtn");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script> -->
 
   </body>
 </html>
