@@ -1,5 +1,5 @@
 body{
-  background: url("../img/Bglight.jpg") 	#87CEEB;
+  background: url("../img/Bglightsm.jpg") 	#87CEEB;
   /*background-size: 100%;*/
   /*background: pink;*/
   align-items: center;
@@ -220,7 +220,8 @@ tbody{
 }*/
 @media (max-width: 700px){
 #head_right, #head_left{
-  display: none;
+  float: none;
+  width: 100%;
 }
 }
 @media (max-width: 800px){
@@ -243,6 +244,7 @@ tbody{
 
   #frame{
     padding-bottom: -10%;
+
   }
 
   .mysterybox{
