@@ -26,14 +26,15 @@ App = {
   maxProfitWei: 0,
 
   init: async () => {
-    await App.initContracts();
-    await App.setupEventListeners();
-    await App.setupRollUI();
+    App.initContracts( async () => {
+      await App.setupEventListeners();
+      await App.setupRollUI();
 
-    $("#roll-btn").click(App.roll);
+      $("#roll-btn").click(App.roll);
 
-    // Make this last so we wait until the end to make page elements visible
-    await App.initPage();
+      // Make this last so we wait until the end to make page elements visible
+      await App.initPage();
+    });
   },
 
   setupEventListeners: () => {
@@ -58,25 +59,31 @@ App = {
     }
   },
 
-  initContracts: async () => {
+  initContracts: (callback) => {
     if (typeof web3 == 'undefined') {
       alert("Couldn't find a web3 instance! Do you have metamask installed?");
     }
 
-    else if (web3.version.network != 1 && web3.version.network != 4 && web3.version.network != 5777) {
-      alert("You must point Metamask to mainnet or rinkeby to use Whale Party!");
-    }
+    web3.version.getNetwork( async (err, netId) => {
+      // Wrong network. Checks that metamask points to mainnet or dev network
+      if (web3.version.network != 1 && web3.version.network != 4 && web3.version.network != 5777) {
+        console.log(`Detected network: ${netId}`);
+        alert("You must point Metamask to mainnet or rinkeby to use Whale Party!");
+      }
 
-    else {
-      App.web3Provider = web3.currentProvider;
+      else {
+        App.web3Provider = web3.currentProvider;
 
-      let contractData = await $.getJSON('contracts/Dice.json');
+        let contractData = await $.getJSON('contracts/Dice.json');
 
-      let abstractContract = TruffleContract(contractData);
-      abstractContract.setProvider(App.web3Provider);
+        let abstractContract = TruffleContract(contractData);
+        abstractContract.setProvider(App.web3Provider);
 
-      App.diceContract = await abstractContract.deployed();
-    }
+        App.diceContract = await abstractContract.deployed();
+
+        callback();
+      }
+    });
   },
 
   initPage: async () => {
