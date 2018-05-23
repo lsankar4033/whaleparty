@@ -112,12 +112,14 @@ App = {
 
     // Display roll ongoing
     $('#roll-prompt').hide();
+    $('.resultboxwin').hide();
+    $('.resultboxlose').hide();
     $('#roll-ongoing').fadeIn();
   },
 
   newRollCompletedHandler: (err, result) => {
     if (!err) {
-      let {player, trueWager, odds, roll, totalPayout} = result.args;
+      let {player, trueWager, wager, odds, roll, totalPayout} = result.args;
 
       let profit = totalPayout - wager;
       let formattedProfit = weiToEth(profit).toFixed(4);
