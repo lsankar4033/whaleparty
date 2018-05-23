@@ -135,13 +135,13 @@ App = {
         $('#roll-ongoing').fadeOut(() => {
 
           if (formattedProfit > 0) {
-            alert("WIN");
-            alert(formattedProfit);
-            alert((formattedProfit > 0));
+            // alert("WIN");
+            // alert(formattedProfit);
+            // alert((formattedProfit > 0));
             $('.resultboxwin').show();
             $('#win-roll').text(roll);
           } else {
-            alert("lose");
+            // alert("lose");
             $('.resultboxlose').show();
             $('#lose-roll').text(roll);
           }
