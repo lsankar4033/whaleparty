@@ -18,6 +18,9 @@ contract Dice is usingOraclize, Ownable {
   // This governs how much gas we'll have for the oraclize callback
   uint256 constant ORACLIZE_GAS_COST = 500000;
 
+  // Tuneable by admin
+  uint256 public maxBet = 0.5 ether;
+
   struct GameData {
     address player;
     uint256 odds; // represents the roll under which all winning rolls must lie
@@ -27,8 +30,7 @@ contract Dice is usingOraclize, Ownable {
     uint256 maxProfit; // max profit calculated at roll time
   }
 
-  // TODO: Un-public this after I'm done debugging
-  mapping(bytes32 => GameData) public _queryToGameData;
+  mapping(bytes32 => GameData) _queryToGameData;
 
   // For display purposes only
   uint256 public completedGames = 0;
@@ -68,20 +70,25 @@ contract Dice is usingOraclize, Ownable {
     msg.sender.transfer(balance);
   }
 
-  // TODO: Access restrict this to whitelist
-  function addBalance() external payable {
+  function addBalance() external payable {}
+
+  function setMaxBet(uint256 newMax) external onlyOwner {
+    maxBet = newMax;
   }
 
   ///////////////
   // USER ACTIONS
   ///////////////
 
-  // NOTE: Currently 10% of contract balance. Can be tuned
+  // NOTE: Currently 5% of contract balance. Can be tuned
   function getMaxProfit() public view returns(uint256) {
     return address(this).balance / 20;
   }
 
   function rollDice(uint256 odds) external payable {
+    // Cannot send a bet along > maxBet
+    require(msg.value <= maxBet);
+
     uint256 queryPrice = oraclize_getPrice("URL");
 
     // player's wager
