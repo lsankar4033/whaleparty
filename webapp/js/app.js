@@ -197,8 +197,8 @@ App = {
     $('#betamount').on('input', function() {
       $('.wager').text($('#betamount').val());
 
-      // var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
-      var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100));
+      var winning_amt = ((1-$('#rangeInput').val()/100)*.99*($('#betamount').val()-0.0040)/($('#rangeInput').val()/100)+(.99*($('#betamount').val()-0.0040))-$('#betamount').val());
+      // var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100));
       var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
@@ -211,7 +211,7 @@ App = {
     $('#min').click(function(){
       $('.wager').text(0.1);
       $('#betamount').val(0.1);
-      var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100));
+      var winning_amt = ((1-$('#rangeInput').val()/100)*.99*($('#betamount').val()-0.0040)/($('#rangeInput').val()/100)+(.99*($('#betamount').val()-0.0040))-$('#betamount').val());
       var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
@@ -225,7 +225,7 @@ App = {
     $('#point5').click(function(){
       $('.wager').text(0.5);
       $('#betamount').val(0.5);
-      var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100));
+      var winning_amt = ((1-$('#rangeInput').val()/100)*.99*($('#betamount').val()-0.0040)/($('#rangeInput').val()/100)+(.99*($('#betamount').val()-0.0040))-$('#betamount').val());
       var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));
@@ -236,20 +236,20 @@ App = {
       }
     });
 
-    // $('#1').click(function(){
-    //   $('.wager').text(1);
-    //   $('#betamount').val(1);
-    //   var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01);
-    //   var max_win_amt = weiToEth(App.maxProfitWei);
-    //   if (max_win_amt < winning_amt){
-    //     $('.winningpot').text((max_win_amt).toFixed(8));
-    //     $('#maxwinreached').show();
-    //   } else{n
+    $('#1').click(function(){
+      $('.wager').text(1);
+      $('#betamount').val(1);
+      var winning_amt = ((1-$('#rangeInput').val()/100)*.99*($('#betamount').val()-0.0040)/($('#rangeInput').val()/100)+(.99*($('#betamount').val()-0.0040))-$('#betamount').val());
+      var max_win_amt = weiToEth(App.maxProfitWei);
+      if (max_win_amt < winning_amt){
+        $('.winningpot').text((max_win_amt).toFixed(8));
+        $('#maxwinreached').show();
+      } else{n
 
-    //     $('.winningpot').text((winning_amt).toFixed(8));
-    //     $('#maxwinreached').hide();
-    //   }
-    // });
+        $('.winningpot').text((winning_amt).toFixed(8));
+        $('#maxwinreached').hide();
+      }
+    });
     //
     // $('#max').click(function(){
     //   $('.wager').text(2);
@@ -267,7 +267,7 @@ App = {
 
     $('#rangeInput').on('input', function() {
       // $('.winningpot').text((.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100)-$('#betamount').val()*.01).toFixed(8));
-      var winning_amt = (.99*(1-$('#rangeInput').val()/100)*$('#betamount').val()/($('#rangeInput').val()/100));
+      var winning_amt = ((1-$('#rangeInput').val()/100)*.99*($('#betamount').val()-0.0040)/($('#rangeInput').val()/100)+(.99*($('#betamount').val()-0.0040))-$('#betamount').val());
       var max_win_amt = weiToEth(App.maxProfitWei);
       if (max_win_amt < winning_amt){
         $('.winningpot').text((max_win_amt).toFixed(8));

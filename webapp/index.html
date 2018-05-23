@@ -51,7 +51,7 @@
                   Hi there thanks for stopping by to checkout Whale Party! We are a group of buidl-ers who enjoy
                   tinkering with and thinking about fun and chill dapps for our Whale Party fam. Besides our roll
                   game - we have other games and products lined up and we are excited to share them with you soon :D.
-                  Come talk to us on <a href="https://twitter.com/whalepartylife?lang=en">Twitter</a>!
+                  Come talk to us on <a href="https://twitter.com/whalepartylife?lang=en" target="_blank" >Twitter</a>!
                   There ain’t no party like a Whale Party.
                 </font>
 
@@ -73,13 +73,15 @@
                 <font size="3" color="silver">
                   Whale Party is a dice game that utilizes an oracle on the Ethereum blockchain (oraclize) to
                   generate its randomness. It's provably fair and doesn't require signing up to play!
+
+                  We also try to be as transparent as possible and your potential winning is calculated with oracle cost and our 1% fee taken out. We are currently using an estimate of 0.0040 ETH for oracle cost.
                 </font>
                 </p>
 
 
                 <p> <font size="4" color="white"> Our smaht contracts  <img  class="winner" src="../img/ethpointer2.png" width = "30px" vertical-align = "sub"> </font></p>
                 <font size="3" color="silver">
-                  The smart contract powering Whale Party can be found <a href="#">here</a>.
+                  The smart contract powering Whale Party can be found <a href="https://etherscan.io/address/0x5dfdc8168c8cf48cd174fad3f8881289929b1f94#code" target="_blank" >here</a>.
                 </font>
 
 
@@ -116,13 +118,13 @@
           <h2> Place your bet </h2>
           <div class = "bet-size">
             <label> Bet Size </label>
-            <input class="numb" id="betamount" type="number" min=".1" max=".5" step=".1" value="0.1">
+            <input class="numb" id="betamount" type="number" min=".1" max="1" step=".1" value="0.1">
 
             <div class = "control">
               <button class="auto-button" type="button" onclick="betamount.value= 0.1" id="min">0.1 </button>
               <button class="auto-button" type="button" onclick="betamount.value= 0.5" id="point5" >0.5 </button>
-              <!-- <button class="auto-button" type="button" onclick="betamount.value= 1"  id ="1" >1 </button>
-              <button class="auto-button" type="button" onclick="betamount.value= 2" id ="max" >MAX </button> -->
+              <button class="auto-button" type="button" onclick="betamount.value= 1"  id ="1" >1 </button>
+              <!-- <button class="auto-button" type="button" onclick="betamount.value= 2" id ="max" >MAX </button> -->
             </div>
           </div>
           <div class = "bet-value">
@@ -146,7 +148,7 @@
         <div class="Analysis">
           <h2 > Roll Under <output  id="x">&nbsp;51</output> </h2>
           <label class="whitelabel" color="white"> Wager: </label> <label id="wager" class="wager">0.1 </label> <label  class="eth"> ETH </label> <br>
-          <label class="whitelabel"> Potential Winning: </label> <label class="winningpot">0.09800000 </label> <label class="eth"> ETH  <font class="maxwin" id="maxwinreached" size="1" color="red"> (max profit reached)</font></label> <br>
+          <label class="whitelabel"> Potential Winning: </label> <label class="winningpot">0.09008000 </label> <label class="eth"> ETH  <font class="maxwin" id="maxwinreached" size="1" color="red"> (max profit reached)</font></label> <br>
           <label class="whitelabel"> Commission: </label> 1%
         </div>
       </div>
