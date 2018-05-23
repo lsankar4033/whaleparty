@@ -514,3 +514,7 @@ background-clip: text;
     text-decoration: none;
     cursor: pointer;
 }
+
+#pending-roll-info{
+  padding-bottom: 10px;
+}

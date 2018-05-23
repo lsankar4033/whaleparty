@@ -95,7 +95,7 @@
 
       </div>
       <div id="frame">
-        <img id="crown" src="../img/CrownFrame.png" height= "350px" width="350px">
+        <img id="crown" src="../img/CrownFrame.png" height= "350px" width="320px">
 
         <div class ="text-block">
           <h1 class = "keep"> Keep </h1>
@@ -116,13 +116,13 @@
           <h2> Place your bet </h2>
           <div class = "bet-size">
             <label> Bet Size </label>
-            <input class="numb" id="betamount" type="number" min=".1" max="2" step=".1" value="0.1">
+            <input class="numb" id="betamount" type="number" min=".1" max=".5" step=".1" value="0.1">
 
             <div class = "control">
-              <button class="auto-button" type="button" onclick="betamount.value= 0.1" id="min">MIN </button>
+              <button class="auto-button" type="button" onclick="betamount.value= 0.1" id="min">0.1 </button>
               <button class="auto-button" type="button" onclick="betamount.value= 0.5" id="point5" >0.5 </button>
-              <button class="auto-button" type="button" onclick="betamount.value= 1"  id ="1" >1 </button>
-              <button class="auto-button" type="button" onclick="betamount.value= 2" id ="max" >MAX </button>
+              <!-- <button class="auto-button" type="button" onclick="betamount.value= 1"  id ="1" >1 </button>
+              <button class="auto-button" type="button" onclick="betamount.value= 2" id ="max" >MAX </button> -->
             </div>
           </div>
           <div class = "bet-value">
@@ -156,7 +156,7 @@
           <img id="loading" src="../img/whalesloading.gif" alt="loading">
 
           <div id="pending-roll-info" style="display: none;">
-                          You wagered <span class="wager whitelabel"></span> Eth to roll under <span class="odds whitelabel"></span>
+                          You wagered <span class="wager whitelabel"></span> ETH to roll under <span class="odds whitelabel"></span>
           </div>
         </div>
       </div>
@@ -167,7 +167,8 @@
           <!-- <div class="rainbow-border">  </div> -->
         <div class="resultboxtxtwin">
           <h2 > You Rolled </h2>
-          <h3> <font id="win-roll" color = "blue"> 500 </font> </h3>
+          <h3> <font id="win-roll" color = "blue"> 500 </font> </h3> <br>
+          <h3> <font color = "blue"> + </font> <font id ="winning_amt" color = "blue"> 500 </font>  </h3>
         </div>
       </div>
 
@@ -179,7 +180,8 @@
           <!-- <div class="rainbow-border">  </div> -->
         <div class="resultboxtxtlose">
           <h2 > You Rolled </h2>
-          <h3> <font id="lose-roll" color = "red"> 50 </font> </h3>
+          <h3> <font id="lose-roll" color = "red"> 50 </font> </h3> <br>
+          <h3> <font id ="_amt" color = "red"> +0 </font>  </h3>
         </div>
       </div>
 
