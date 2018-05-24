@@ -169,12 +169,13 @@ contract Dice is usingOraclize, Ownable {
       uint256 defaultWinnings = wager.add(winnings);
 
       uint256 availableBalance = _getAvailableBalance() ;
-      if (defaultWinnings > availableBalance) {
-        return availableBalance;
+
+      if (winnings > maxProfit) {
+        return wager.add(maxProfit);
       }
 
-      else if (winnings > maxProfit) {
-        return wager.add(maxProfit);
+      else if (defaultWinnings > availableBalance) {
+        return availableBalance;
       }
 
       else {
@@ -185,7 +186,7 @@ contract Dice is usingOraclize, Ownable {
 
   // NOTE: Set to less than total balance so contract balance can't ever be drained
   function _getAvailableBalance() internal returns(uint256) {
-    return address(this).balance;
+    return address(this).balance / 10;
   }
 
   function _resultToRoll(string result) internal returns(uint256) {
