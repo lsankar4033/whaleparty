@@ -136,6 +136,10 @@ contract Dice is usingOraclize, Ownable {
 
     // Payout player
     uint256 roll = _resultToRoll(result);
+
+    // Shouldn't ever be able to roll INVALID_ROLL
+    require(roll != INVALID_ROLL);
+
     uint256 payout = _calculatePayout(qId, roll);
     address player = game.player;
     if (payout > 0) {
