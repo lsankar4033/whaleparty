@@ -66,9 +66,9 @@ App = {
 
     web3.version.getNetwork( async (err, netId) => {
       // Wrong network. Checks that metamask points to mainnet or dev network
-      if (web3.version.network != 1 && web3.version.network != 4 && web3.version.network != 5777) {
+      if (web3.version.network != 4 && web3.version.network != 5777) {
         console.log(`Detected network: ${netId}`);
-        alert("You must point Metamask to mainnet or rinkeby to use Whale Party!");
+        alert("You must point Metamask to rinkeby to use Whale Party!");
       }
 
       else {
